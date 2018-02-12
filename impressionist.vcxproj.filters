@@ -9,7 +9,7 @@
       <UniqueIdentifier>{44221553-6d29-45d0-886a-80fa9894cbb8}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Header Files\Resource Files">
       <UniqueIdentifier>{b89c4043-2e1a-46ad-8c0b-3512354115f9}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
@@ -39,6 +39,9 @@
     <ClCompile Include="PointBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CircleBrush.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitmap.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointBrush.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
