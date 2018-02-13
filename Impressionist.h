@@ -2,6 +2,7 @@
 #define IMPRESSIONIST_H
 #define SAMPLE_SOLUTION
 #include <stdio.h>
+#include <iostream>
 
 #include <FL/Fl.h>
 #include <FL/gl.h>
