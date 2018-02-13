@@ -52,3 +52,14 @@ void ImpBrush::SetColor (const Point source)
 	glColor3ubv( color );
 
 }
+
+uint32_t seedseq_random_using_clock()
+{
+	uint64_t seed = std::chrono::high_resolution_clock::
+		now().time_since_epoch().count();
+	std::seed_seq seeder{ uint32_t(seed),uint32_t(seed >> 32) };
+	++seed;
+	int out;
+	seeder.generate(&out, &out + 1);
+	return out;
+}

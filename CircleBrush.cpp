@@ -32,22 +32,26 @@ void CircleBrush::BrushMove(const Point source, const Point target)
 
 	int size = pDoc->getSize() > 1 ? pDoc->getSize() : 1;
 	float r = float(size / 2.0);
+	PlotCircle(source, target, r);
+}
+
+void CircleBrush::PlotCircle(const Point source, const Point target, const int radius) {
 	float theta = 2 * float(3.1415) / float(50);
 	float tan_component = tanf(theta);
 	float radial_component = cosf(theta);
-	
-	float x = r;
+
+	float x = radius;
 	float y = 0;
 
 	glBegin(GL_POLYGON);
 	SetColor(source);
-	
+
 	for (int i = 0; i < 50; i++) {
 		glVertex2d(target.x + x, target.y + y);
-		
+
 		float tx = -y;
 		float ty = x;
-		
+
 		x += tx * tan_component;
 		y += ty * tan_component;
 

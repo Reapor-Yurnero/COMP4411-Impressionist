@@ -8,6 +8,8 @@
 //
 
 #include <stdlib.h>
+#include <random>
+#include <chrono>
 
 // Each brush type has an associated constant.
 enum
@@ -62,5 +64,7 @@ private:
 	// Brush's name (not used in this version).
 	char*				m_pBrushName;
 };
+
+uint32_t seedseq_random_using_clock();
 
 #endif
