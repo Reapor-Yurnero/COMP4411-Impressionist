@@ -11,6 +11,9 @@
 
 extern float frand();
 
+static Point curr(-1,-1);
+static Point prev(-1,-1);
+
 LineBrush::LineBrush(ImpressionistDoc* pDoc, char* name) :
 	ImpBrush(pDoc, name)
 {
@@ -41,14 +44,24 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	
 	int size = pDoc->getSize();
 	int mode = pDoc->m_nStrokeMode;
-	int line_angle = 90;
+	int line_angle = dlg->getLineAngle();
 	switch (mode) {
-	case 0:
+	case 0: // sliderbar or right click line
 		line_angle = dlg->getLineAngle();
 		break;
-	case 1:
+	case 1: // gradient
+
 		break;
-	case 2:
+	case 2: // cursor direction
+		curr = target;
+		if (curr.x != -1 && prev.x != -1 && !(curr == prev)) {
+			float dx = curr.x - prev.x;
+			float dy = curr.y - prev.y;
+			float radient = atan(dy / dx);
+			if (radient < 0) radient = M_PI + radient;
+			line_angle = radient * 180 / M_PI;
+		}
+		prev = curr;
 		break;
 	default:
 		break;

@@ -137,6 +137,8 @@ int ImpressionistDoc::loadImage(char *iname)
 
 	m_ucBitmap		= data;
 
+	// generate gradient map
+
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
 	memset(m_ucPainting, 0, width*height*3);

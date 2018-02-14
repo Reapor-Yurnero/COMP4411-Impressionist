@@ -33,6 +33,7 @@ public:
 	Point(int xx, int yy) { x = xx; y = yy; };
 
 	int x, y;
+	bool operator == (const Point &r);
 };
 
 class ImpBrush 

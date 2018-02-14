@@ -63,3 +63,9 @@ uint32_t seedseq_random_using_clock()
 	seeder.generate(&out, &out + 1);
 	return out;
 }
+
+bool Point::operator==(const Point & r)
+{
+	if (x == r.x && y == r.y) return true;
+	return false;
+}

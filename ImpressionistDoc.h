@@ -14,6 +14,7 @@ class ImpressionistUI;
 
 class ImpressionistDoc 
 {
+// Functions
 public:
 	ImpressionistDoc();
 
@@ -44,6 +45,12 @@ public:
 	// Bitmaps for original image and painting.
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
+	
+
+	// Matrices for gradient
+	int*			m_ucGradientX;
+	int*			m_ucGradientY;
+	int*			m_ucGradientNorm;
 
 
 	// The current active brush.
@@ -61,6 +68,11 @@ public:
 	GLubyte* GetOriginalPixel( int x, int y );   
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
+	// Get the gradient Map of the original picture
+	void GetGradient(unsigned char* bitmap, int* x, int* y, int* norm);
+	// Get intensity value from a RGB pixel
+	GLubyte GetIntensity(int r, int g, int b);
+
 
 
 private:
