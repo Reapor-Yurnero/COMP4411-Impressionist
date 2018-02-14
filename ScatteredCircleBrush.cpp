@@ -36,7 +36,7 @@ void ScatteredCircleBrush::BrushMove(const Point source, const Point target)
 	PlotCircle(source, target, r);
 	srand(seedseq_random_using_clock());
 	unsigned int scattered_num = rand() % 3 + 1;
-	for (int i = 0; i < scattered_num; i++) {
+	for (unsigned int i = 0; i < scattered_num; i++) {
 		int rand_theta = rand() % 360;
 		float rand_distance = (rand() % 150) / 100.0 * r;
 		Point rand_source(source.x + sin(rand_theta)*rand_distance, source.y + cos(rand_theta)*rand_distance);
@@ -46,7 +46,7 @@ void ScatteredCircleBrush::BrushMove(const Point source, const Point target)
 
 }
 
-void ScatteredCircleBrush::PlotCircle(const Point source, const Point target, const int radius) {
+void ScatteredCircleBrush::PlotCircle(const Point source, const Point target, const float radius) {
 	float theta = 2 * float(3.1415) / float(50);
 	float tan_component = tanf(theta);
 	float radial_component = cosf(theta);

@@ -51,6 +51,8 @@ ImpressionistDoc::ImpressionistDoc()
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
+	// default 0 mode for stroke direction
+	m_nStrokeMode = 0;
 
 }
 
@@ -78,6 +80,11 @@ char* ImpressionistDoc::getImageName()
 void ImpressionistDoc::setBrushType(int type)
 {
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[type];
+}
+
+void ImpressionistDoc::setStrokeDirection(int mode)
+{
+	m_nStrokeMode = mode;
 }
 
 //---------------------------------------------------------

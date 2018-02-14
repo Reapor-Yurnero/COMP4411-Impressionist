@@ -41,7 +41,6 @@ void ScatteredPointBrush::BrushMove(const Point source, const Point target)
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::shuffle(p_vector.begin(), p_vector.end(), g);
-	std::vector<int>::iterator it;
 	for (unsigned int i = 0; i < p_vector.size(); i++) {
 		if (p_vector[i] == 1) {
 			int dx = i % (radius * 2 + 1) - radius;

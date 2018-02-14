@@ -35,7 +35,7 @@ void CircleBrush::BrushMove(const Point source, const Point target)
 	PlotCircle(source, target, r);
 }
 
-void CircleBrush::PlotCircle(const Point source, const Point target, const int radius) {
+void CircleBrush::PlotCircle(const Point source, const Point target, const float radius) {
 	float theta = 2 * float(3.1415) / float(50);
 	float tan_component = tanf(theta);
 	float radial_component = cosf(theta);

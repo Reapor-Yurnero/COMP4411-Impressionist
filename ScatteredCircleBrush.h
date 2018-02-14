@@ -19,7 +19,7 @@ public:
 	void BrushBegin(const Point source, const Point target);
 	void BrushMove(const Point source, const Point target);
 	void BrushEnd(const Point source, const Point target);
-	void PlotCircle(const Point source, const Point target, const int radius);
+	void PlotCircle(const Point source, const Point target, const float radius);
 	char* BrushName(void);
 };
 
