@@ -310,7 +310,7 @@ void ImpressionistUI::cb_angleSlides(Fl_Widget * o, void * v)
 
 void ImpressionistUI::cb_alphaSlides(Fl_Widget * o, void * v)
 {
-	((ImpressionistUI*)(o->user_data()))->m_nAlpha = float(((Fl_Slider *)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_nOpacity = double(((Fl_Slider *)o)->value());
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -396,6 +396,11 @@ void ImpressionistUI::setLineAngle(int angle)
 		m_LineAngleSlider->value(m_nLineAngle);
 }
 
+double ImpressionistUI::getOpacity()
+{
+	return m_nOpacity;
+}
+
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -468,7 +473,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nSize = 10;
 	m_nLineWidth = 1;
 	m_nLineAngle = 90;
-	m_nAlpha = 0.0;
+	m_nOpacity = 1.0;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -538,7 +543,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_AlphaSlider->minimum(0);
 		m_AlphaSlider->maximum(1);
 		m_AlphaSlider->step(0.01);
-		m_AlphaSlider->value(m_nAlpha);
+		m_AlphaSlider->value(m_nOpacity);
 		m_AlphaSlider->align(FL_ALIGN_RIGHT);
 		m_AlphaSlider->callback(cb_alphaSlides);
 

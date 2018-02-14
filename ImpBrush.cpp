@@ -40,16 +40,16 @@ char* ImpBrush::BrushName(void)
 // which is the coord at the original window to sample 
 // the color from
 //----------------------------------------------------
-void ImpBrush::SetColor (const Point source)
+
+void ImpBrush::SetColor(const Point source)
 {
 	ImpressionistDoc* pDoc = GetDocument();
 
-
-	GLubyte color[3];
-
-	memcpy ( color, pDoc->GetOriginalPixel( source ), 3 );
- 
-	glColor3ubv( color );
+	GLubyte color[4];
+	memcpy(color, pDoc->GetOriginalPixel(source), 3);
+	color[3] = 255* (pDoc->m_pUI->getOpacity());
+	printf("%d %d %d %d\n",color[0],color[1],color[2],color[3]);
+	glColor4ub(color[0],color[1],color[2],color[3]);
 
 }
 

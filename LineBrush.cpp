@@ -67,12 +67,13 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		break;
 	}
 	//printf("%d\n", line_angle);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBegin(GL_LINES);
-	SetColor(source);
-	//std::cout <<line_angle<<" "<< cosf((float)line_angle*M_PI/180) << " " << sinf((float)line_angle/M_PI) << std::endl;
-	glVertex2d(target.x + (size/2.0)*cosf((float)line_angle*M_PI / 180), target.y+ (size / 2.0)*sinf((float)line_angle*M_PI / 180));
-	glVertex2d(target.x - (size / 2.0)*cosf((float)line_angle*M_PI / 180), target.y - (size / 2.0)*sinf((float)line_angle*M_PI / 180));
-
+		SetColor(source);
+		//std::cout <<line_angle<<" "<< cosf((float)line_angle*M_PI/180) << " " << sinf((float)line_angle/M_PI) << std::endl;
+		glVertex2d(target.x + (size/2.0)*cosf((float)line_angle*M_PI / 180), target.y+ (size / 2.0)*sinf((float)line_angle*M_PI / 180));
+		glVertex2d(target.x - (size / 2.0)*cosf((float)line_angle*M_PI / 180), target.y - (size / 2.0)*sinf((float)line_angle*M_PI / 180));
 	glEnd();
 }
 

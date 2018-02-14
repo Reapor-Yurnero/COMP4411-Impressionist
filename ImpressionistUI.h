@@ -59,6 +59,7 @@ public:
 	void				setLineWidth(int width);
 	int					getLineAngle();
 	void				setLineAngle(int angle);
+	double				getOpacity();
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -67,7 +68,7 @@ private:
 	int		m_nSize;
 	int		m_nLineWidth;
 	int		m_nLineAngle;
-	float	m_nAlpha;
+	double	m_nOpacity;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];

@@ -43,22 +43,23 @@ void CircleBrush::PlotCircle(const Point source, const Point target, const float
 	float x = radius;
 	float y = 0;
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBegin(GL_POLYGON);
-	SetColor(source);
+		SetColor(source);
 
-	for (int i = 0; i < 50; i++) {
-		glVertex2d(target.x + x, target.y + y);
+		for (int i = 0; i < 50; i++) {
+			glVertex2d(target.x + x, target.y + y);
 
-		float tx = -y;
-		float ty = x;
+			float tx = -y;
+			float ty = x;
 
-		x += tx * tan_component;
-		y += ty * tan_component;
+			x += tx * tan_component;
+			y += ty * tan_component;
 
-		x *= radial_component;
-		y *= radial_component;
-	}
-
+			x *= radial_component;
+			y *= radial_component;
+		}
 	glEnd();
 }
 

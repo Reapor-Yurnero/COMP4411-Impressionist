@@ -39,7 +39,9 @@ void PointBrush::BrushMove( const Point source, const Point target )
 		printf( "PointBrush::BrushMove  document is NULL\n" );
 		return;
 	}
-
+	//printf("%lf\n", dlg->getOpacity());
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBegin( GL_POINTS );
 		SetColor( source );
 

@@ -46,9 +46,11 @@ void ScatteredPointBrush::BrushMove(const Point source, const Point target)
 			int dx = i % (radius * 2 + 1) - radius;
 			int dy = i / (radius * 2 + 1) - radius;
 			Point temp_source(source.x + dx, source.y + dy);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glBegin(GL_POINTS);
-			SetColor(temp_source);
-			glVertex2d(target.x + dx, target.y + dy);
+				SetColor(temp_source);
+				glVertex2d(target.x + dx, target.y + dy);
 			glEnd();
 		}
 	}
