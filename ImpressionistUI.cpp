@@ -372,6 +372,30 @@ void ImpressionistUI::setSize( int size )
 		m_BrushSizeSlider->value(m_nSize);
 }
 
+int ImpressionistUI::getLineWidth()
+{
+	return m_nLineWidth;
+}
+
+void ImpressionistUI::setLineWidth(int width)
+{
+	m_nLineWidth = width;
+	if (width <= 40)
+		m_LineWidthSlider->value(m_nLineWidth);
+}
+
+int ImpressionistUI::getLineAngle()
+{
+	return m_nLineAngle;
+}
+
+void ImpressionistUI::setLineAngle(int angle)
+{
+	m_nLineAngle = angle;
+	if (angle <= 179)
+		m_LineAngleSlider->value(m_nLineAngle);
+}
+
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -442,7 +466,7 @@ ImpressionistUI::ImpressionistUI() {
 	// init values
 
 	m_nSize = 10;
-	m_nLineWidth = 10;
+	m_nLineWidth = 1;
 	m_nLineAngle = 90;
 	m_nAlpha = 0.0;
 
@@ -499,7 +523,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_LineAngleSlider->labelfont(FL_COURIER);
 		m_LineAngleSlider->labelsize(12);
 		m_LineAngleSlider->minimum(0);
-		m_LineAngleSlider->maximum(359);
+		m_LineAngleSlider->maximum(179);
 		m_LineAngleSlider->step(1);
 		m_LineAngleSlider->value(m_nLineAngle);
 		m_LineAngleSlider->align(FL_ALIGN_RIGHT);
