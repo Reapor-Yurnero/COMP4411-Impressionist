@@ -66,6 +66,11 @@ void ImpressionistDoc::setUI(ImpressionistUI* ui)
 	m_pUI	= ui;
 }
 
+void ImpressionistDoc::setLineAngle(int angle)
+{
+	m_pUI->setLineAngle(angle);
+}
+
 //---------------------------------------------------------
 // Returns the active picture/painting name
 //---------------------------------------------------------
@@ -80,7 +85,13 @@ char* ImpressionistDoc::getImageName()
 //---------------------------------------------------------
 void ImpressionistDoc::setBrushType(int type)
 {
+	BrushType = type;
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[type];
+}
+
+int ImpressionistDoc::getBrushType()
+{
+	return BrushType;
 }
 
 void ImpressionistDoc::setStrokeDirection(int mode)

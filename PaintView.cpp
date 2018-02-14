@@ -117,13 +117,28 @@ void PaintView::draw()
 			RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-
+			RightStart = target;
 			break;
 		case RIGHT_MOUSE_DRAG:
-
+/*			RestoreContent();
+			RightEnd = target;
+			glLineWidth(1);
+			glBegin(GL_LINE);
+			glColor3f(0, 0, 1);
+			glVertex2d(RightStart.x, RightStart.y);
+			glVertex2d(RightEnd.x, RightEnd.y);
+			glEnd();*/
 			break;
-		case RIGHT_MOUSE_UP:
 
+		case RIGHT_MOUSE_UP:
+			RightEnd = target;
+			if ((m_pDoc->getBrushType() == 1 || m_pDoc->getBrushType() == 4) && m_pDoc->m_nStrokeMode == 0) {
+				std::cout << RightStart.x << " " << RightStart.y << std::endl;
+				std::cout << RightEnd.x << " " << RightEnd.y << std::endl;
+				int angle = getRightCursorAngle(RightStart, RightEnd);
+				printf("%d\n", angle);
+				m_pDoc->setLineAngle(angle);
+			}
 			break;
 
 		default:
@@ -239,4 +254,16 @@ void PaintView::RestoreContent()
 				  m_pPaintBitstart);
 
 //	glDrawBuffer(GL_FRONT);
+}
+
+int PaintView::getRightCursorAngle(Point s, Point t)
+{
+	float dx = t.x - s.x;
+	float dy = t.y - s.y;
+	float slope = dy / dx;
+	float radian = atan(slope);
+	std::cout << radian << std::endl;
+	if (radian < 0) radian = M_PI + radian;
+	int degree = radian / M_PI * 180;
+	return degree;
 }
