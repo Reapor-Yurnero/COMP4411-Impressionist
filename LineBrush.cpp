@@ -45,19 +45,37 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	int size = pDoc->getSize();
 	int mode = pDoc->m_nStrokeMode;
 	int line_angle = dlg->getLineAngle();
+	float radient = 0; int pos = 0;
 	switch (mode) {
 	case 0: // sliderbar or right click line
 		line_angle = dlg->getLineAngle();
 		break;
-	case 1: // gradient
-
+	case 1: // gradient 
+		//printf("begin\n");
+		pos = source.x + pDoc->m_nWidth*source.y;
+		//std::cout <<source.x <<" "<<source.y<<" "<<pos << std::endl;
+		//std::cout << pDoc->m_ucGradientY[pos] << " " << pDoc->m_ucGradientX[pos]<<std::endl;
+		if (pDoc->m_ucGradientX[pos] == 0) {
+			line_angle = 0;
+			break;
+		}
+		radient = atan(pDoc->m_ucGradientY[pos] / pDoc->m_ucGradientX[pos]);
+		//std::cout << radient << std::endl;
+		if (radient < 0) radient = M_PI + radient;
+		line_angle = radient * 180 / M_PI + 90;
+		//std::cout << line_angle << std::endl;
+		//printf("end\n");
 		break;
 	case 2: // cursor direction
 		curr = target;
 		if (curr.x != -1 && prev.x != -1 && !(curr == prev)) {
 			float dx = curr.x - prev.x;
 			float dy = curr.y - prev.y;
-			float radient = atan(dy / dx);
+			if (dx == 0) {
+				line_angle = 90;
+				break;
+			}
+			radient = atan(dy / dx);
 			if (radient < 0) radient = M_PI + radient;
 			line_angle = radient * 180 / M_PI;
 		}

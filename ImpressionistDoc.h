@@ -46,6 +46,9 @@ public:
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
 	
+	// Bitmaps for the intensity image
+	unsigned char*	m_ucIntensityMap;
+	unsigned char*	m_ucBlurredIntensityMap;
 
 	// Matrices for gradient
 	int*			m_ucGradientX;
@@ -69,9 +72,9 @@ public:
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
 	// Get the gradient Map of the original picture
-	void GetGradient(unsigned char* bitmap, int* x, int* y, int* norm);
+	// void GetGradient(unsigned char* bitmap, int* x, int* y, int* norm);
 	// Get intensity value from a RGB pixel
-	GLubyte GetIntensity(int r, int g, int b);
+	GLubyte GetIntensity(GLubyte r, GLubyte g, GLubyte b);
 
 
 
