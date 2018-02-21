@@ -30,11 +30,14 @@ public:
 
 	void resizeWindow(int width, int height);
 
+	void trackCursor(Point cursor);
+	void trackCursor(int x, int y);
 	ImpressionistDoc*	m_pDoc;
 
 private:
 	int	m_nWindowWidth, 
 		m_nWindowHeight;
+	Point cur_cursor;
 
 };
 

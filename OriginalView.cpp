@@ -75,6 +75,14 @@ void OriginalView::draw()
 		glDrawBuffer( GL_BACK );
 		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
 
+		// display corresponding cursor on original view
+
+		glPointSize(4.0);
+		glBegin(GL_POINTS);
+		glColor3f(1, 0, 0);
+		glVertex2d(cur_cursor.x, cur_cursor.y);
+		glEnd();
+		//std::cout << cur_cursor.x << " " << cur_cursor.y << "\n";
 	}
 			
 	glFlush();
@@ -89,5 +97,17 @@ void OriginalView::resizeWindow(int	width,
 								int	height)
 {
 	resize(x(), y(), width, height);
+}
+
+void OriginalView::trackCursor(Point cursor)
+{
+	cur_cursor.x = cursor.x; cur_cursor.y = cursor.y;
+	redraw();
+}
+
+void OriginalView::trackCursor(int x, int y)
+{
+	cur_cursor.x = x; cur_cursor.y = y;
+	redraw();
 }
 
