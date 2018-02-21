@@ -105,6 +105,7 @@ void PaintView::draw()
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
+			SaveCurrentContent();
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
 		case LEFT_MOUSE_DRAG:
@@ -114,11 +115,10 @@ void PaintView::draw()
 		case LEFT_MOUSE_UP:
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
 
-			SaveCurrentContent();
-			RestoreContent();
+			//RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-			SaveCurrentContent();
+			//SaveCurrentContent();
 			RightStart = target;
 			break;
 		case RIGHT_MOUSE_DRAG:
@@ -129,11 +129,11 @@ void PaintView::draw()
 			glVertex2d(RightStart.x, RightStart.y);
 			glVertex2d(RightEnd.x, RightEnd.y);
 			glEnd();
-			RestoreContent();
+			//RestoreContent();
 			break;
 
 		case RIGHT_MOUSE_UP:
-			RestoreContent();
+			//RestoreContent();
 			RightEnd = target;
 			if ((m_pDoc->getBrushType() == 1 || m_pDoc->getBrushType() == 4) && m_pDoc->m_nStrokeMode == 0) {
 				//std::cout << RightStart.x << " " << RightStart.y << std::endl;

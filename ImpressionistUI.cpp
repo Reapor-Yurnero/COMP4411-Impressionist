@@ -230,7 +230,17 @@ void ImpressionistUI::cb_exit(Fl_Menu_* o, void* v)
 
 }
 
-
+//------------------------------------------------------------
+// Undo the previous step
+// Called by the UI when the undo menu item is chosen
+//------------------------------------------------------------
+void ImpressionistUI::cb_undo(Fl_Menu_* o, void* v)
+{
+	//whoami(o)->m_mainWindow->hide();
+	//whoami(o)->m_brushDialog->hide();
+	whoami(o)->m_paintView->RestoreContent();
+	
+}
 
 //-----------------------------------------------------------
 // Brings up an about dialog box
@@ -411,11 +421,12 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
-
+	{ "&Edit",		0, 0, 0, FL_SUBMENU },
+		{ "&Undo", FL_CTRL + 'z', (Fl_Callback *)ImpressionistUI::cb_undo },
+		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },
-
 	{ 0 }
 };
 
