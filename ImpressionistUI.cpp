@@ -242,6 +242,11 @@ void ImpressionistUI::cb_undo(Fl_Menu_* o, void* v)
 	
 }
 
+void ImpressionistUI::cb_swap(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->getDocument()->swapview();
+}
+
 //-----------------------------------------------------------
 // Brings up an about dialog box
 // Called by the UI when the about menu item is chosen
@@ -423,6 +428,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ 0 },
 	{ "&Edit",		0, 0, 0, FL_SUBMENU },
 		{ "&Undo", FL_CTRL + 'z', (Fl_Callback *)ImpressionistUI::cb_undo },
+		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },

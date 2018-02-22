@@ -85,6 +85,20 @@ char* ImpressionistDoc::getImageName()
 	return m_imageName;
 }
 
+void ImpressionistDoc::swapview()
+{
+	unsigned char * temp = m_ucBitmap;
+	m_ucBitmap = m_ucPainting;
+	m_ucPainting = temp;
+	m_pUI->m_origView->refresh();
+	m_pUI->m_paintView->refresh();
+}
+
+void ImpressionistDoc::updatePaintingView()
+{
+
+}
+
 //---------------------------------------------------------
 // Called by the UI when the user changes the brush type.
 // type: one of the defined brush types.

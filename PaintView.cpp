@@ -105,7 +105,7 @@ void PaintView::draw()
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
-			SaveCurrentContent();
+			//SaveCurrentContent();
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
 		case LEFT_MOUSE_DRAG:
@@ -148,6 +148,7 @@ void PaintView::draw()
 			printf("Unknown event!!\n");		
 			break;
 		}
+		SaveCurrentContent();
 	}
 
 	glFlush();

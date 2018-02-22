@@ -32,6 +32,8 @@ public:
 	void	setSize(int size);				// set the UI size for brush
 	void	setLineAngle(int angle);
 	char*	getImageName();					// get the current image name
+	void	swapview();						// swap the original and painting view
+	void	updatePaintingView();
 	
 
 // Attributes
