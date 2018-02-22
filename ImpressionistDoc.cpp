@@ -96,7 +96,7 @@ void ImpressionistDoc::addHistory()
 		}
 	}
 	unsigned char *data;
-	if (m_history.size() > 5) {
+	if (m_history.size() > 50) {
 		data = m_history[0];
 		m_history.pop_front();
 		printf("remove first history\n");
