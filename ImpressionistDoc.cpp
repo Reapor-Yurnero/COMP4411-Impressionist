@@ -29,6 +29,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_imageName[0]	='\0';	
 
 	m_nWidth		= -1;
+	m_nHeight		= -1;
 	m_ucBitmap		= NULL;
 	m_ucPainting	= NULL;
 	m_ucGradientNorm = NULL;
@@ -209,7 +210,6 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_nHeight		= height;
 	m_nPaintHeight	= height;
 
-	printf("release\n");
 	// release old storage
 	if ( m_ucBitmap ) delete [] m_ucBitmap;
 	if ( m_ucPainting ) delete [] m_ucPainting;
@@ -221,7 +221,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	if (m_ucBlurredIntensityMap) delete [] m_ucBlurredIntensityMap;
 	if (m_ucEdgeMap) delete[] m_ucEdgeMap;
 	m_ucBitmap		= data;
-	printf("load\n");
+
 	// generate intensity map
 	m_ucIntensityMap = new unsigned char[width * height];
 	for (int i = 0; i < width*height; i++) {
@@ -235,6 +235,8 @@ int ImpressionistDoc::loadImage(char *iname)
 		printf("\n");
 	}*/
 	printf("intensity\n");
+
+
 	// blur the intensity map by Gaussian filter
 	m_ucBlurredIntensityMap = new GLubyte[width * height];
 	for (int i = 0; i < width; i++) {
@@ -263,6 +265,7 @@ int ImpressionistDoc::loadImage(char *iname)
 		printf("\n");
 	}*/
 	printf("blur\n");
+
 	// obtain the gradient value
 	m_ucGradientNorm = new int[width*height];
 	m_ucGradientX = new int[width*height];
@@ -359,6 +362,169 @@ int ImpressionistDoc::loadImage(char *iname)
 	// refresh draw history
 	clearHistory();
 	addHistory();
+
+	return 1;
+}
+
+int ImpressionistDoc::loadAnotherImage(char * iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width,height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	if (width != m_nWidth || height != m_nHeight)
+	{
+		fl_alert("Different size BMP!");
+		return 0;
+	}
+
+	printf("release\n");
+	// release old storage
+	if (m_ucBitmap) delete[] m_ucBitmap;
+	//if (m_ucPainting) delete[] m_ucPainting;
+
+	if (m_ucGradientNorm) delete[] m_ucGradientNorm;
+	if (m_ucGradientX) delete[] m_ucGradientX;
+	if (m_ucGradientY) delete[] m_ucGradientY;
+	if (m_ucIntensityMap) delete[] m_ucIntensityMap;
+	if (m_ucBlurredIntensityMap) delete[] m_ucBlurredIntensityMap;
+	if (m_ucEdgeMap) delete[] m_ucEdgeMap;
+	m_ucBitmap = data;
+
+
+	printf("load\n");
+	// generate intensity map
+	m_ucIntensityMap = new unsigned char[width * height];
+	for (int i = 0; i < width*height; i++) {
+		m_ucIntensityMap[i] = GetIntensity(m_ucBitmap[3 * i], m_ucBitmap[3 * i + 1], m_ucBitmap[3 * i + 2]);
+	}
+	/*
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << (int)m_ucIntensityMap[i + j*width] << " ";
+	}
+	printf("\n");
+	}*/
+	printf("intensity\n");
+
+
+	// blur the intensity map by Gaussian filter
+	m_ucBlurredIntensityMap = new GLubyte[width * height];
+	for (int i = 0; i < width; i++) {
+		m_ucBlurredIntensityMap[i] = m_ucIntensityMap[i];
+		m_ucBlurredIntensityMap[(height - 1)*width + i] = m_ucIntensityMap[(height - 1)*width + i];
+	}
+	for (int i = 0; i < height; i++) {
+		m_ucBlurredIntensityMap[i*width] = m_ucIntensityMap[i*width];
+		m_ucBlurredIntensityMap[i*width + width - 1] = m_ucIntensityMap[i*width + width - 1];
+	}
+	for (int i = 1; i < width - 1; i++) {
+		for (int j = 1; j < height - 1; j++) {
+			m_ucBlurredIntensityMap[i + j*width] = (
+				m_ucIntensityMap[(i - 1) + (j - 1)*width] + 2 * m_ucIntensityMap[(i)+(j - 1)*width] +
+				m_ucIntensityMap[(i + 1) + (j - 1)*width] + 2 * m_ucIntensityMap[(i - 1) + (j)*width] +
+				4 * m_ucIntensityMap[(i)+(j)*width] + 2 * m_ucIntensityMap[(i + 1) + (j)*width] +
+				m_ucIntensityMap[(i - 1) + (j + 1)*width] + 2 * m_ucIntensityMap[(i)+(j + 1)*width] +
+				m_ucIntensityMap[(i + 1) + (j + 1)*width]) / 16;
+		}
+	}
+	/*
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << (int )m_ucBlurredIntensityMap[i + j*width] << " ";
+	}
+	printf("\n");
+	}*/
+	printf("blur\n");
+
+
+	// obtain the gradient value
+	m_ucGradientNorm = new int[width*height];
+	m_ucGradientX = new int[width*height];
+	m_ucGradientY = new int[width*height];
+	for (int i = 1; i < width - 1; ++i) {
+		int j = 0;
+		m_ucGradientX[i + j*width] = -2 * m_ucBlurredIntensityMap[(i - 1) + (j)*width] + 2 * m_ucBlurredIntensityMap[(i + 1) + (j)*width] -
+			m_ucBlurredIntensityMap[(i - 1) + (j + 1)*width] + m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
+		m_ucGradientY[i + j*width] = -1 * m_ucBlurredIntensityMap[(i - 1) + (j + 1)*width] -
+			2 * m_ucBlurredIntensityMap[(i)+(j + 1)*width] - m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
+	}
+	for (int i = 1; i < width - 1; ++i) {
+		int j = height - 1;
+		m_ucGradientX[i + j*width] = -1 * m_ucBlurredIntensityMap[(i - 1) + (j - 1)*width] + m_ucBlurredIntensityMap[(i + 1) + (j - 1)*width]
+			- 2 * m_ucBlurredIntensityMap[(i - 1) + (j)*width] + 2 * m_ucBlurredIntensityMap[(i + 1) + (j)*width];
+		m_ucGradientY[i + j*width] = 1 * m_ucBlurredIntensityMap[(i - 1) + (j - 1)*width] + 2 * m_ucBlurredIntensityMap[(i)+(j - 1)*width]
+			+ m_ucBlurredIntensityMap[(i + 1) + (j - 1)*width];
+	}
+	for (int j = 1; j < height - 1; ++j) {
+		int i = 0;
+		m_ucGradientX[i + j*width] = m_ucBlurredIntensityMap[(i + 1) + (j - 1)*width] + 2 * m_ucBlurredIntensityMap[(i + 1) + (j)*width] + m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
+		m_ucGradientY[i + j*width] = 2 * m_ucBlurredIntensityMap[(i)+(j - 1)*width] - 2 * m_ucBlurredIntensityMap[(i)+(j + 1)*width] + m_ucBlurredIntensityMap[(i + 1) + (j - 1)*width] - m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
+	}
+	for (int j = 1; j < height - 1; ++j) {
+		int i = width - 1;
+		m_ucGradientX[i + j*width] = -1 * m_ucBlurredIntensityMap[(i - 1) + (j - 1)*width] - 2 * m_ucBlurredIntensityMap[(i - 1) + (j)*width] - m_ucBlurredIntensityMap[(i - 1) + (j + 1)*width];
+		m_ucGradientY[i + j*width] = 2 * m_ucBlurredIntensityMap[(i)+(j - 1)*width] - 2 * m_ucBlurredIntensityMap[(i)+(j + 1)*width] + 1 * m_ucBlurredIntensityMap[(i - 1) + (j - 1)*width] - 1 * m_ucBlurredIntensityMap[(i - 1) + (j + 1)*width];
+	}
+	m_ucGradientX[0] = 2 * m_ucBlurredIntensityMap[1] + m_ucBlurredIntensityMap[1 + width];
+	m_ucGradientY[0] = -2 * m_ucBlurredIntensityMap[width] - m_ucBlurredIntensityMap[1 + width];
+	m_ucGradientX[width - 1] = -2 * m_ucBlurredIntensityMap[width - 2] - 1 * m_ucBlurredIntensityMap[2 * width - 2];
+	m_ucGradientY[width - 1] = -1 * m_ucBlurredIntensityMap[2 * width - 2]
+		- 2 * m_ucBlurredIntensityMap[2 * width - 1];
+	m_ucGradientX[(height - 1)*width] = m_ucBlurredIntensityMap[(height - 2)*width + 1] + 2 * m_ucBlurredIntensityMap[(height - 1)*width + 1];
+	m_ucGradientY[(height - 1)*width] = 2 * m_ucBlurredIntensityMap[(height - 2)*width]
+		+ m_ucBlurredIntensityMap[(height - 2)*width + 1];
+	m_ucGradientX[height*width - 1] = -1 * m_ucBlurredIntensityMap[(height - 1)*width - 2] - 2 * m_ucBlurredIntensityMap[height*width - 2];
+	m_ucGradientY[height*width - 1] = 1 * m_ucBlurredIntensityMap[(height - 1)*width - 2] + 2 * m_ucBlurredIntensityMap[(height - 1)*width - 1];
+	for (int i = 1; i < width - 1; i++) {
+		for (int j = 1; j < height - 1; j++) {
+			m_ucGradientX[i + j*width] =
+				-1 * m_ucBlurredIntensityMap[(i - 1) + (j - 1)*width] + m_ucBlurredIntensityMap[(i + 1) + (j - 1)*width]
+				- 2 * m_ucBlurredIntensityMap[(i - 1) + (j)*width] + 2 * m_ucBlurredIntensityMap[(i + 1) + (j)*width]
+				- 1 * m_ucBlurredIntensityMap[(i - 1) + (j + 1)*width] + m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
+			m_ucGradientY[i + j*width] =
+				1 * m_ucBlurredIntensityMap[(i - 1) + (j - 1)*width] + 2 * m_ucBlurredIntensityMap[(i)+(j - 1)*width]
+				+ m_ucBlurredIntensityMap[(i + 1) + (j - 1)*width] - 1 * m_ucBlurredIntensityMap[(i - 1) + (j + 1)*width]
+				- 2 * m_ucBlurredIntensityMap[(i)+(j + 1)*width] - m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
+		}
+	}
+
+	// generate edge image
+	m_ucEdgeMap = new unsigned char[width*height * 3];
+	for (int i = 0; i < width; ++i) {
+		for (int j = 0; j < height; ++j) {
+			m_ucGradientNorm[i + j*width] = sqrt(pow(m_ucGradientX[i + j*width], 2) + pow(m_ucGradientY[i + j*width], 2));
+			m_ucEdgeMap[3 * (i + j*width)] = m_ucEdgeMap[3 * (i + j*width) + 1] = m_ucEdgeMap[3 * (i + j*width) + 2] = m_ucGradientNorm[i + j*width] > 128 ? 255 : 0;
+		}
+	}
+
+	/*
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << m_ucGradientX[i + j*width] << " ";
+	}
+	printf("\n");
+	}
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << m_ucGradientY[i + j*width] << " ";
+	}
+	printf("\n");
+	}*/
+	printf("gradient\n");
+
+
+	// display it on origView
+	m_pUI->m_origView->refresh();
+
+	printf("newimage\n");
+	m_pUI->m_paintView->refresh();
 
 	return 1;
 }
