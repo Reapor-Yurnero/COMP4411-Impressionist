@@ -43,7 +43,6 @@ private:
 			m_nWindowWidth, 
 			m_nWindowHeight;
 	Point	RightStart, RightEnd;
-
 	int		getRightCursorAngle(Point s, Point t);
 
 };

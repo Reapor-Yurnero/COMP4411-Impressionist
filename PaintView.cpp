@@ -106,6 +106,7 @@ void PaintView::draw()
 		{
 		case LEFT_MOUSE_DOWN:
 			SaveCurrentContent();
+			m_pDoc->addHistory();
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
 		case LEFT_MOUSE_DRAG:

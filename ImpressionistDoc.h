@@ -9,6 +9,7 @@
 
 #include "impressionist.h"
 #include "bitmap.h"
+#include <deque>
 
 class ImpressionistUI;
 
@@ -33,6 +34,10 @@ public:
 	void	setLineAngle(int angle);
 	char*	getImageName();					// get the current image name
 	
+	void addHistory();
+	void clearHistory();
+	void redoHistory();
+	void undoHistory();
 
 // Attributes
 public:
@@ -81,6 +86,9 @@ public:
 private:
 	char			m_imageName[256];
 	int				BrushType;
+
+	std::deque<unsigned char*> m_history;
+	int             m_nHistoryIndex = 0;
 
 };
 
