@@ -149,6 +149,7 @@ void PaintView::draw()
 			printf("Unknown event!!\n");		
 			break;
 		}
+		SaveCurrentContent();
 	}
 
 	glFlush();

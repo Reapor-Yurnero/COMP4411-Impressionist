@@ -248,6 +248,11 @@ void ImpressionistUI::cb_redo(Fl_Menu_* o, void* v)
 	whoami(o)->m_pDoc->redoHistory();
 }
 
+void ImpressionistUI::cb_swap(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->getDocument()->swapview();
+}
+
 //-----------------------------------------------------------
 // Brings up an about dialog box
 // Called by the UI when the about menu item is chosen
@@ -430,6 +435,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&Edit",		0, 0, 0, FL_SUBMENU },
 		{ "&Undo", FL_CTRL + 'z', (Fl_Callback *)ImpressionistUI::cb_undo },
 		{ "&Redo", FL_CTRL + 'y', (Fl_Callback *)ImpressionistUI::cb_redo },
+		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
