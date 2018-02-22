@@ -13,6 +13,7 @@
 #include <GL/glu.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <vector>
 
 class ImpressionistDoc;
 
@@ -29,13 +30,20 @@ public:
 
 	void SaveCurrentContent();
 
+	void SaveOldContent();
+
 	void RestoreContent();
 
 	ImpressionistDoc *m_pDoc;
 
 	void AutoPaintTrigger();
+
+	std::vector<int> UpdatePos;
+
 private:
+	void CompareOldCurrent();
 	void AutoPaint();
+	GLubyte*	m_pOldPainting;
 	GLvoid* m_pPaintBitstart;
 	int		m_nDrawWidth,
 			m_nDrawHeight,

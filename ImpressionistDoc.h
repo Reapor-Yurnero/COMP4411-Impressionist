@@ -90,6 +90,7 @@ public:
 	// void GetGradient(unsigned char* bitmap, int* x, int* y, int* norm);
 	// Get intensity value from a RGB pixel
 	GLubyte GetIntensity(GLubyte r, GLubyte g, GLubyte b);
+	void	applyDim();
 
 
 

@@ -43,8 +43,10 @@ public:
 	Fl_Slider*			m_LineAngleSlider;
 	Fl_Slider*			m_AlphaSlider;
 	Fl_Slider*			m_SpacingSlider;
+	Fl_Slider*			m_DimSlider;
 	Fl_Button*          m_ClearCanvasButton;
-	Fl_Button*			m_AutoPaintButtion;
+	Fl_Button*			m_AutoPaintButton;
+	Fl_Button*			m_DimButton;
 
 	// for RGB configuration dialog
 	Fl_Window*			m_RGBConfigDialog;
@@ -70,6 +72,7 @@ public:
 	double				getOpacity();
 	double				m_RScale, m_GScale, m_BScale;
 	int					m_nSpacing;
+	double				m_nDimvalue;
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -101,6 +104,7 @@ private:
 	static void cb_swap(Fl_Menu_* o, void* v);
 	static void cb_EdgeView(Fl_Menu_* o, void* v);
 	static void cb_OriginalView(Fl_Menu_* o, void* v);
+	static void cb_GradientView(Fl_Menu_* o, void* v);
 	static void	cb_RGBScale(Fl_Menu_* o, void* v);
 	static void	cb_about(Fl_Menu_* o, void* v);
 	static void	cb_brushChoice(Fl_Widget* o, void* v);
@@ -115,6 +119,8 @@ private:
 	static void	cb_BScaleSlides(Fl_Widget* o, void* v);
 	static void	cb_SpacingSlides(Fl_Widget* o, void* v);
 	static void	cb_AutoPaintButton(Fl_Widget* o, void* v);
+	static void	cb_DimSlides(Fl_Widget* o, void* v);
+	static void	cb_DimButton(Fl_Widget* o, void* v);
 };
 
 #endif

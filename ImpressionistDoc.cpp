@@ -760,3 +760,27 @@ GLubyte ImpressionistDoc::GetIntensity(GLubyte r, GLubyte g, GLubyte b)
 	return (GLubyte) 0.299 * r + 0.587 * g + 0.144 * b;
 }
 
+void ImpressionistDoc::applyDim()
+{
+	double dim = m_pUI->m_nDimvalue;
+	int w = m_nWidth;
+	int h = m_nHeight;
+	unsigned int mark = 0;
+	std::vector<int> & v = m_pUI->m_paintView->UpdatePos;
+	unsigned int size = v.size();
+	//std::cout << size << std::endl;
+	//for (int i = 0; i < v.size(); ++i) printf("%d %d\n", i, v[i]);
+	for (int i = 0; i < w*h; ++i) {
+		if (size != 0 && mark != size && v[mark] == i) {
+			//printf("%d %d\n", mark, v[mark]);
+			++mark;
+			continue;
+		}
+		m_ucPainting[3 * i] = m_ucBitmap[3 * i] * dim;
+		m_ucPainting[3 * i+1] = m_ucBitmap[3 * i+1] * dim;
+		m_ucPainting[3 * i+2] = m_ucBitmap[3 * i+2] * dim;
+	}
+	//printf("dimend\n");
+	m_pUI->m_paintView->refresh();
+}
+

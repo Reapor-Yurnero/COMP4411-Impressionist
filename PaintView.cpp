@@ -38,7 +38,7 @@ PaintView::PaintView(int			x,
 {
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;
-
+	m_pOldPainting = NULL;
 }
 
 
@@ -103,6 +103,7 @@ void PaintView::draw()
 		//std::cout << source.x << " " << source.y << " " << target.x << " " << target.y << std::endl;
 		// This is the event handler
 		//std::cout << m_nWindowWidth << " " << m_nWindowHeight << std::endl;
+		SaveOldContent();
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
@@ -149,11 +150,13 @@ void PaintView::draw()
 
 		case AUTO_PAINT:
 			AutoPaint();
+			break;
 		default:
 			printf("Unknown event!!\n");		
 			break;
 		}
 		SaveCurrentContent();
+		CompareOldCurrent();
 	}
 
 	glFlush();
@@ -247,6 +250,15 @@ void PaintView::SaveCurrentContent()
 				  m_pPaintBitstart );
 }
 
+void PaintView::SaveOldContent()
+{
+	int width = m_pDoc->m_nWidth;
+	int height = m_pDoc->m_nHeight;
+	if (m_pOldPainting) delete[] m_pOldPainting;
+	m_pOldPainting = new GLubyte[width*height * 3];
+	memcpy(m_pOldPainting, m_pDoc->m_ucPainting, width*height * 3);
+}
+
 
 void PaintView::RestoreContent()
 {
@@ -271,6 +283,22 @@ void PaintView::AutoPaintTrigger()
 	isAnEvent = 1;
 	eventToDo = AUTO_PAINT;
 	redraw();
+}
+
+void PaintView::CompareOldCurrent()
+{
+	int width = m_pDoc->m_nWidth;
+	int height = m_pDoc->m_nHeight;
+	for (int i = 0; i < width*height; ++i) {
+		if (m_pOldPainting[3 * i] != m_pDoc->m_ucPainting[3 * i] ||
+			m_pOldPainting[3 * i + 1] != m_pDoc->m_ucPainting[3 * i + 1] ||
+			m_pOldPainting[3 * i + 2] != m_pDoc->m_ucPainting[3 * i + 2]) 
+		{
+			UpdatePos.push_back(i);
+		}
+	}
+	std::sort(UpdatePos.begin(), UpdatePos.end());
+	UpdatePos.erase(std::unique(UpdatePos.begin(), UpdatePos.end()), UpdatePos.end());
 }
 
 void PaintView::AutoPaint()

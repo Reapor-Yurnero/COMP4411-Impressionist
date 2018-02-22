@@ -52,6 +52,9 @@ void OriginalView::draw()
 	case 1:
 		BitmapUsed = m_pDoc->m_ucEdgeMap;
 		break;
+	case 2:
+		BitmapUsed = m_pDoc->m_ucGradientBitmap;
+		break;
 	default:
 		break;
 	}

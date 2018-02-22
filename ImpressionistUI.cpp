@@ -285,6 +285,12 @@ void ImpressionistUI::cb_OriginalView(Fl_Menu_ * o, void * v)
 	whoami(o)->m_origView->refresh();
 }
 
+void ImpressionistUI::cb_GradientView(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->m_origView->imageChoice = 2;
+	whoami(o)->m_origView->refresh();
+}
+
 void ImpressionistUI::cb_RGBScale(Fl_Menu_ * o, void * v)
 {
 	whoami(o)->m_RGBConfigDialog->show();
@@ -398,6 +404,16 @@ void ImpressionistUI::cb_AutoPaintButton(Fl_Widget * o, void * v)
 	((ImpressionistUI*)(o->user_data()))->m_paintView->AutoPaintTrigger();
 }
 
+void ImpressionistUI::cb_DimSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nDimvalue = double(((Fl_Slider *)o)->value());
+}
+
+void ImpressionistUI::cb_DimButton(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->applyDim();
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -502,6 +518,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&Display",	0, 0, 0, FL_SUBMENU },
 		{ "&Show Original Image", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_OriginalView },
 		{ "&Show Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_EdgeView },
+		{ "&Show Gradient Image", FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_GradientView },
 		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		{ 0 }, 
@@ -574,6 +591,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_GScale = 1.0;
 	m_BScale = 1.0;
 	m_nSpacing = 10;
+	m_nDimvalue = 1.0;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -661,9 +679,27 @@ ImpressionistUI::ImpressionistUI() {
 		m_SpacingSlider->callback(cb_SpacingSlides);
 
 		// Auto Paint buttion
-		m_ClearCanvasButton = new Fl_Button(270, 196, 120, 25, "&Auto Paint");
-		m_ClearCanvasButton->user_data((void*)(this));
-		m_ClearCanvasButton->callback(cb_AutoPaintButton);
+		m_AutoPaintButton = new Fl_Button(270, 196, 120, 25, "&Auto Paint");
+		m_AutoPaintButton->user_data((void*)(this));
+		m_AutoPaintButton->callback(cb_AutoPaintButton);
+
+		// Dim slider
+		m_DimSlider = new Fl_Value_Slider(10, 230, 200, 20, "Dimmed Background");
+		m_DimSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_DimSlider->type(FL_HOR_NICE_SLIDER);
+		m_DimSlider->labelfont(FL_COURIER);
+		m_DimSlider->labelsize(12);
+		m_DimSlider->minimum(0);
+		m_DimSlider->maximum(1);
+		m_DimSlider->step(0.01);
+		m_DimSlider->value(m_nDimvalue);
+		m_DimSlider->align(FL_ALIGN_RIGHT);
+		m_DimSlider->callback(cb_DimSlides);
+
+		// Dim Apply buttion
+		m_DimButton = new Fl_Button(270, 226, 120, 25, "&Apply Dim");
+		m_DimButton->user_data((void*)(this));
+		m_DimButton->callback(cb_DimButton);
 
     m_brushDialog->end();	
 
