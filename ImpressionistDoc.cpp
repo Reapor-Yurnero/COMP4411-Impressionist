@@ -86,15 +86,59 @@ char* ImpressionistDoc::getImageName()
 	return m_imageName;
 }
 
-void ImpressionistDoc::swapview()
+void ImpressionistDoc::addHistory()
 {
-	unsigned char * temp = m_ucBitmap;
-	m_ucBitmap = m_ucPainting;
-	m_ucPainting = temp;
-	m_pUI->m_origView->refresh();
-	m_pUI->m_paintView->refresh();
+	if (!m_history.empty()) {
+		for (int i = m_history.size() - 1; i > m_nHistoryIndex; i--) {
+			delete[] m_history[i];
+			m_history.pop_back();
+			printf("remove history on index %d\n", i);
+		}
+	}
+	unsigned char *data;
+	if (m_history.size() > 5) {
+		data = m_history[0];
+		m_history.pop_front();
+		printf("remove first history\n");
+	}
+	else {
+		data = new unsigned char[3 * m_nHeight * m_nWidth];
+	}
+	m_history.push_back(data);
+	memcpy(data, m_ucPainting, 3 * m_nHeight * m_nWidth);
+	m_nHistoryIndex = m_history.size() - 1;
+	printf("add history on index %d\n", m_nHistoryIndex);
 }
 
+void ImpressionistDoc::clearHistory()
+{
+	for (auto item : m_history) {
+		delete[] item;
+	}
+	m_nHistoryIndex = 0;
+	printf("clear history\n");
+}
+
+void ImpressionistDoc::redoHistory()
+{
+	if (m_history.size() > 1 && m_nHistoryIndex < m_history.size() - 1) {
+		++m_nHistoryIndex;
+		memcpy(m_ucPainting, m_history[m_nHistoryIndex], 3 * m_nHeight * m_nWidth);
+		m_pUI->m_paintView->refresh();
+		printf("redo history onto index %d\n", m_nHistoryIndex);
+	}
+}
+
+
+void ImpressionistDoc::undoHistory()
+{
+	if (m_history.size() > 1 && m_nHistoryIndex > 0 ) {
+		--m_nHistoryIndex;
+		memcpy(m_ucPainting, m_history[m_nHistoryIndex], 3 * m_nHeight * m_nWidth);
+		m_pUI->m_paintView->refresh();
+		printf("undo history onto index %d\n", m_nHistoryIndex);
+	}
+}
 
 //---------------------------------------------------------
 // Called by the UI when the user changes the brush type.
@@ -295,6 +339,9 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_pUI->m_paintView->resizeWindow(width, height);	
 	m_pUI->m_paintView->refresh();
 
+	// refresh draw history
+	clearHistory();
+	addHistory();
 
 	return 1;
 }

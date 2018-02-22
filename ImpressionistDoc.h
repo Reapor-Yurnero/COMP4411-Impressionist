@@ -9,6 +9,7 @@
 
 #include "impressionist.h"
 #include "bitmap.h"
+#include <deque>
 
 class ImpressionistUI;
 
@@ -35,6 +36,10 @@ public:
 	void	swapview();						// swap the original and painting view
 
 	
+	void addHistory();
+	void clearHistory();
+	void redoHistory();
+	void undoHistory();
 
 // Attributes
 public:
@@ -84,6 +89,9 @@ public:
 private:
 	char			m_imageName[256];
 	int				BrushType;
+
+	std::deque<unsigned char*> m_history;
+	int             m_nHistoryIndex = 0;
 
 };
 
