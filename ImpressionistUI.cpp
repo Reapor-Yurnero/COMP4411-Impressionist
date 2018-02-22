@@ -247,6 +247,18 @@ void ImpressionistUI::cb_swap(Fl_Menu_ * o, void * v)
 	whoami(o)->getDocument()->swapview();
 }
 
+void ImpressionistUI::cb_EdgeView(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->m_origView->imageChoice = 1;
+	whoami(o)->m_origView->refresh();
+}
+
+void ImpressionistUI::cb_OriginalView(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->m_origView->imageChoice = 0;
+	whoami(o)->m_origView->refresh();
+}
+
 //-----------------------------------------------------------
 // Brings up an about dialog box
 // Called by the UI when the about menu item is chosen
@@ -430,6 +442,10 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Undo", FL_CTRL + 'z', (Fl_Callback *)ImpressionistUI::cb_undo },
 		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ 0 },
+	{ "&Advanced",		0, 0, 0, FL_SUBMENU },
+		{ "&Show Original Image", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_OriginalView },
+		{ "&Show Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_EdgeView },
+		{ 0 }, 
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },

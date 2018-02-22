@@ -36,6 +36,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucGradientY = NULL;
 	m_ucBlurredIntensityMap = NULL;
 	m_ucIntensityMap = NULL;
+	m_ucEdgeMap = NULL;
 
 
 	// create one instance of each brush
@@ -94,10 +95,6 @@ void ImpressionistDoc::swapview()
 	m_pUI->m_paintView->refresh();
 }
 
-void ImpressionistDoc::updatePaintingView()
-{
-
-}
 
 //---------------------------------------------------------
 // Called by the UI when the user changes the brush type.
@@ -155,13 +152,13 @@ int ImpressionistDoc::loadImage(char *iname)
 	// release old storage
 	if ( m_ucBitmap ) delete [] m_ucBitmap;
 	if ( m_ucPainting ) delete [] m_ucPainting;
-	/*
+	
 	if (m_ucGradientNorm) delete [] m_ucGradientNorm;
 	if (m_ucGradientX) delete [] m_ucGradientX;
 	if (m_ucGradientY) delete [] m_ucGradientY;
 	if (m_ucIntensityMap) delete [] m_ucIntensityMap;
 	if (m_ucBlurredIntensityMap) delete [] m_ucBlurredIntensityMap;
-	*/
+	if (m_ucEdgeMap) delete[] m_ucEdgeMap;
 	m_ucBitmap		= data;
 	printf("load\n");
 	// generate intensity map
@@ -255,12 +252,16 @@ int ImpressionistDoc::loadImage(char *iname)
 				-2 * m_ucBlurredIntensityMap[(i)+(j + 1)*width] - m_ucBlurredIntensityMap[(i + 1) + (j + 1)*width];
 		}
 	}
+
+	// generate edge image
+	m_ucEdgeMap = new unsigned char[width*height*3];
 	for (int i = 0; i < width; ++i) {
 		for (int j = 0; j < height; ++j) {
 			m_ucGradientNorm[i+j*width] = sqrt(pow(m_ucGradientX[i + j*width], 2) + pow(m_ucGradientY[i + j*width], 2));
-			
+			m_ucEdgeMap[3*(i + j*width)] = m_ucEdgeMap[3 * (i + j*width)+1] = m_ucEdgeMap[3*(i + j*width) + 2] = m_ucGradientNorm[i + j*width] > 128 ? 255 : 0;
 		}
 	}
+
 	/*
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
@@ -275,6 +276,8 @@ int ImpressionistDoc::loadImage(char *iname)
 		printf("\n");
 	}*/
 	printf("gradient\n");
+
+
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
 	memset(m_ucPainting, 0, width*height*3);

@@ -23,6 +23,7 @@ class ImpressionistDoc;
 class OriginalView : public Fl_Gl_Window
 {
 public:
+	int imageChoice;
 	OriginalView(int x, int y, int w, int h, const char *l);
 	
 	void draw();

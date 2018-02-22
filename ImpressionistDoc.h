@@ -33,7 +33,7 @@ public:
 	void	setLineAngle(int angle);
 	char*	getImageName();					// get the current image name
 	void	swapview();						// swap the original and painting view
-	void	updatePaintingView();
+
 	
 
 // Attributes
@@ -51,6 +51,7 @@ public:
 	// Bitmaps for the intensity image
 	unsigned char*	m_ucIntensityMap;
 	unsigned char*	m_ucBlurredIntensityMap;
+	unsigned char*	m_ucEdgeMap;
 
 	// Matrices for gradient
 	int*			m_ucGradientX;
