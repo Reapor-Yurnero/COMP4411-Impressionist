@@ -81,10 +81,22 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		}
 		prev = curr;
 		break;
+	case 3: // another gradient
+		pos = source.x + pDoc->m_nWidth*source.y;
+		//std::cout <<source.x <<" "<<source.y<<" "<<pos << std::endl;
+		//std::cout << pDoc->m_ucGradientY[pos] << " " << pDoc->m_ucGradientX[pos]<<std::endl;
+		if (pDoc->m_ucAGradientX[pos] == 0) {
+			line_angle = 0;
+			break;
+		}
+		radient = atan(pDoc->m_ucAGradientY[pos] / pDoc->m_ucAGradientX[pos]);
+		//std::cout << radient << std::endl;
+		if (radient < 0) radient = M_PI + radient;
+		line_angle = radient * 180 / M_PI + 90;
 	default:
 		break;
 	}
-	//printf("%d\n", line_angle);
+	printf("%d\n", line_angle);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBegin(GL_LINES);
@@ -99,4 +111,3 @@ void LineBrush::BrushEnd(const Point source, const Point target)
 {
 	// do nothing so far
 }
-

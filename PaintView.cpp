@@ -17,6 +17,7 @@
 #define RIGHT_MOUSE_DOWN	4
 #define RIGHT_MOUSE_DRAG	5
 #define RIGHT_MOUSE_UP		6
+#define AUTO_PAINT			7
 
 
 #ifndef WIN32
@@ -94,22 +95,24 @@ void PaintView::draw()
 
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
 	{
-
 		// Clear it after processing.
 		isAnEvent	= 0;	
 
 		Point source( coord.x + m_nStartCol, m_nEndRow - coord.y );
 		Point target( coord.x, m_nWindowHeight - coord.y );
-		
+		//std::cout << source.x << " " << source.y << " " << target.x << " " << target.y << std::endl;
 		// This is the event handler
+		//std::cout << m_nWindowWidth << " " << m_nWindowHeight << std::endl;
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
+			if (target.x > drawWidth || source.y < 0) break;
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
 		case LEFT_MOUSE_DRAG:
+			if (target.x > drawWidth || source.y < 0) break;
 			m_pDoc->m_pCurrentBrush->BrushMove( source, target );
-			m_pDoc->m_pUI->m_origView->trackCursor(source);
+			m_pDoc->m_pUI->m_origView->trackCursor(source.x,source.y+(m_nWindowHeight-drawHeight));
 			break;
 		case LEFT_MOUSE_UP:
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
@@ -144,6 +147,8 @@ void PaintView::draw()
 			}
 			break;
 
+		case AUTO_PAINT:
+			AutoPaint();
 		default:
 			printf("Unknown event!!\n");		
 			break;
@@ -201,7 +206,7 @@ int PaintView::handle(int event)
 	case FL_MOVE:
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
-		m_pDoc->m_pUI->m_origView->trackCursor(coord.x + m_nStartCol, m_nEndRow - coord.y);
+		m_pDoc->m_pUI->m_origView->trackCursor(coord.x + m_nStartCol, m_nEndRow - coord.y + m_nWindowHeight - m_nDrawHeight);
 		break;
 	default:
 		return 0;
@@ -259,6 +264,42 @@ void PaintView::RestoreContent()
 				  m_pPaintBitstart);
 
 //	glDrawBuffer(GL_FRONT);
+}
+
+void PaintView::AutoPaintTrigger()
+{
+	isAnEvent = 1;
+	eventToDo = AUTO_PAINT;
+	redraw();
+}
+
+void PaintView::AutoPaint()
+{
+	m_pDoc->clearCanvas();
+	RestoreContent();
+	std::random_device rd;
+	std::mt19937 g(rd());
+	srand(time(NULL));
+	int spacing = m_pDoc->m_pUI->m_nSpacing;
+	int width = m_pDoc->m_nWidth;
+	int height = m_pDoc->m_nHeight;
+	int size = m_pDoc->getSize();
+	std::vector<Point> PaintOrder;
+	for (int j = 0; j < height; j += spacing) {
+		for (int i = 0; i < width; i += spacing) {
+			float dx = rand() % 50 / 100.0 * size;
+			float dy = rand() % 50 / 100.0 * size;
+			Point temp(i + dx, j + dy);
+			PaintOrder.push_back(temp);
+		}
+	}
+	std::shuffle(PaintOrder.begin(), PaintOrder.end(), g);
+	for (int i = 0; i < PaintOrder.size(); ++i) {
+		m_pDoc->setSize((rand() % 20 / 100.0 + 0.9)*size);
+		m_pDoc->m_pCurrentBrush->BrushBegin(PaintOrder[i], PaintOrder[i]);
+		m_pDoc->m_pCurrentBrush->BrushEnd(PaintOrder[i], PaintOrder[i]);
+		m_pDoc->setSize(size);
+	}
 }
 
 int PaintView::getRightCursorAngle(Point s, Point t)

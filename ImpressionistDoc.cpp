@@ -38,7 +38,11 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucBlurredIntensityMap = NULL;
 	m_ucIntensityMap = NULL;
 	m_ucEdgeMap = NULL;
-
+	m_ucGradientBitmap = NULL;
+	m_ucAGradientX = NULL;
+	m_ucAGradientY = NULL;
+	m_ucABlurredIntensityMap = NULL;
+	m_ucAIntensityMap = NULL;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -186,6 +190,11 @@ int ImpressionistDoc::getSize()
 	return m_pUI->getSize();
 }
 
+void ImpressionistDoc::setSize(int size)
+{
+	m_pUI->setSize(size);
+}
+
 //---------------------------------------------------------
 // Load the specified image
 // This is called by the UI when the load image button is 
@@ -220,6 +229,11 @@ int ImpressionistDoc::loadImage(char *iname)
 	if (m_ucIntensityMap) delete [] m_ucIntensityMap;
 	if (m_ucBlurredIntensityMap) delete [] m_ucBlurredIntensityMap;
 	if (m_ucEdgeMap) delete[] m_ucEdgeMap;
+	if (m_ucGradientBitmap) delete[] m_ucGradientBitmap;
+	if (m_ucAGradientX) delete[] m_ucAGradientX;
+	if (m_ucAGradientY) delete[] m_ucAGradientY;
+	if (m_ucAIntensityMap) delete[] m_ucAIntensityMap;
+	if (m_ucABlurredIntensityMap) delete[] m_ucABlurredIntensityMap;
 	m_ucBitmap		= data;
 
 	// generate intensity map
@@ -525,6 +539,154 @@ int ImpressionistDoc::loadAnotherImage(char * iname)
 
 	printf("newimage\n");
 	m_pUI->m_paintView->refresh();
+
+	return 1;
+}
+
+int ImpressionistDoc::loadGradientImage(char * iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width, height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	if (width != m_nWidth || height != m_nHeight)
+	{
+		fl_alert("Different size BMP!");
+		return 0;
+	}
+
+	printf("release\n");
+	// release old storage
+	if (m_ucGradientBitmap) delete[] m_ucGradientBitmap;
+	// if (m_ucPainting) delete[] m_ucPainting;
+	if (m_ucAGradientX) delete[] m_ucAGradientX;
+	if (m_ucAGradientY) delete[] m_ucAGradientY;
+	if (m_ucAIntensityMap) delete[] m_ucAIntensityMap;
+	if (m_ucABlurredIntensityMap) delete[] m_ucABlurredIntensityMap;
+	//if (m_ucEdgeMap) delete[] m_ucEdgeMap;
+	m_ucGradientBitmap = data;
+	printf("load\n");
+
+
+	// generate intensity map
+	m_ucAIntensityMap = new unsigned char[width * height];
+	for (int i = 0; i < width*height; i++) {
+		m_ucAIntensityMap[i] = GetIntensity(m_ucGradientBitmap[3 * i], m_ucGradientBitmap[3 * i + 1], m_ucGradientBitmap[3 * i + 2]);
+	}
+	/*
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << (int)m_ucAIntensityMap[i + j*width] << " ";
+	}
+	printf("\n");
+	}*/
+	printf("intensity\n");
+
+
+	// blur the intensity map by Gaussian filter
+	m_ucABlurredIntensityMap = new GLubyte[width * height];
+	for (int i = 0; i < width; i++) {
+		m_ucABlurredIntensityMap[i] = m_ucAIntensityMap[i];
+		m_ucABlurredIntensityMap[(height - 1)*width + i] = m_ucAIntensityMap[(height - 1)*width + i];
+	}
+	for (int i = 0; i < height; i++) {
+		m_ucABlurredIntensityMap[i*width] = m_ucAIntensityMap[i*width];
+		m_ucABlurredIntensityMap[i*width + width - 1] = m_ucAIntensityMap[i*width + width - 1];
+	}
+	for (int i = 1; i < width - 1; i++) {
+		for (int j = 1; j < height - 1; j++) {
+			m_ucABlurredIntensityMap[i + j*width] = (
+				m_ucAIntensityMap[(i - 1) + (j - 1)*width] + 2 * m_ucAIntensityMap[(i)+(j - 1)*width] +
+				m_ucAIntensityMap[(i + 1) + (j - 1)*width] + 2 * m_ucAIntensityMap[(i - 1) + (j)*width] +
+				4 * m_ucAIntensityMap[(i)+(j)*width] + 2 * m_ucAIntensityMap[(i + 1) + (j)*width] +
+				m_ucAIntensityMap[(i - 1) + (j + 1)*width] + 2 * m_ucAIntensityMap[(i)+(j + 1)*width] +
+				m_ucAIntensityMap[(i + 1) + (j + 1)*width]) / 16;
+		}
+	}
+	/*
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << (int )m_ucABlurredIntensityMap[i + j*width] << " ";
+	}
+	printf("\n");
+	}*/
+	printf("blur\n");
+
+
+	// obtain the gradient value
+	m_ucGradientNorm = new int[width*height];
+	m_ucAGradientX = new int[width*height];
+	m_ucAGradientY = new int[width*height];
+	for (int i = 1; i < width - 1; ++i) {
+		int j = 0;
+		m_ucAGradientX[i + j*width] = -2 * m_ucABlurredIntensityMap[(i - 1) + (j)*width] + 2 * m_ucABlurredIntensityMap[(i + 1) + (j)*width] -
+			m_ucABlurredIntensityMap[(i - 1) + (j + 1)*width] + m_ucABlurredIntensityMap[(i + 1) + (j + 1)*width];
+		m_ucAGradientY[i + j*width] = -1 * m_ucABlurredIntensityMap[(i - 1) + (j + 1)*width] -
+			2 * m_ucABlurredIntensityMap[(i)+(j + 1)*width] - m_ucABlurredIntensityMap[(i + 1) + (j + 1)*width];
+	}
+	for (int i = 1; i < width - 1; ++i) {
+		int j = height - 1;
+		m_ucAGradientX[i + j*width] = -1 * m_ucABlurredIntensityMap[(i - 1) + (j - 1)*width] + m_ucABlurredIntensityMap[(i + 1) + (j - 1)*width]
+			- 2 * m_ucABlurredIntensityMap[(i - 1) + (j)*width] + 2 * m_ucABlurredIntensityMap[(i + 1) + (j)*width];
+		m_ucAGradientY[i + j*width] = 1 * m_ucABlurredIntensityMap[(i - 1) + (j - 1)*width] + 2 * m_ucABlurredIntensityMap[(i)+(j - 1)*width]
+			+ m_ucABlurredIntensityMap[(i + 1) + (j - 1)*width];
+	}
+	for (int j = 1; j < height - 1; ++j) {
+		int i = 0;
+		m_ucAGradientX[i + j*width] = m_ucABlurredIntensityMap[(i + 1) + (j - 1)*width] + 2 * m_ucABlurredIntensityMap[(i + 1) + (j)*width] + m_ucABlurredIntensityMap[(i + 1) + (j + 1)*width];
+		m_ucAGradientY[i + j*width] = 2 * m_ucABlurredIntensityMap[(i)+(j - 1)*width] - 2 * m_ucABlurredIntensityMap[(i)+(j + 1)*width] + m_ucABlurredIntensityMap[(i + 1) + (j - 1)*width] - m_ucABlurredIntensityMap[(i + 1) + (j + 1)*width];
+	}
+	for (int j = 1; j < height - 1; ++j) {
+		int i = width - 1;
+		m_ucAGradientX[i + j*width] = -1 * m_ucABlurredIntensityMap[(i - 1) + (j - 1)*width] - 2 * m_ucABlurredIntensityMap[(i - 1) + (j)*width] - m_ucABlurredIntensityMap[(i - 1) + (j + 1)*width];
+		m_ucAGradientY[i + j*width] = 2 * m_ucABlurredIntensityMap[(i)+(j - 1)*width] - 2 * m_ucABlurredIntensityMap[(i)+(j + 1)*width] + 1 * m_ucABlurredIntensityMap[(i - 1) + (j - 1)*width] - 1 * m_ucABlurredIntensityMap[(i - 1) + (j + 1)*width];
+	}
+	m_ucAGradientX[0] = 2 * m_ucABlurredIntensityMap[1] + m_ucABlurredIntensityMap[1 + width];
+	m_ucAGradientY[0] = -2 * m_ucABlurredIntensityMap[width] - m_ucABlurredIntensityMap[1 + width];
+	m_ucAGradientX[width - 1] = -2 * m_ucABlurredIntensityMap[width - 2] - 1 * m_ucABlurredIntensityMap[2 * width - 2];
+	m_ucAGradientY[width - 1] = -1 * m_ucABlurredIntensityMap[2 * width - 2]
+		- 2 * m_ucABlurredIntensityMap[2 * width - 1];
+	m_ucAGradientX[(height - 1)*width] = m_ucABlurredIntensityMap[(height - 2)*width + 1] + 2 * m_ucABlurredIntensityMap[(height - 1)*width + 1];
+	m_ucAGradientY[(height - 1)*width] = 2 * m_ucABlurredIntensityMap[(height - 2)*width]
+		+ m_ucABlurredIntensityMap[(height - 2)*width + 1];
+	m_ucAGradientX[height*width - 1] = -1 * m_ucABlurredIntensityMap[(height - 1)*width - 2] - 2 * m_ucABlurredIntensityMap[height*width - 2];
+	m_ucAGradientY[height*width - 1] = 1 * m_ucABlurredIntensityMap[(height - 1)*width - 2] + 2 * m_ucABlurredIntensityMap[(height - 1)*width - 1];
+	for (int i = 1; i < width - 1; i++) {
+		for (int j = 1; j < height - 1; j++) {
+			m_ucAGradientX[i + j*width] =
+				-1 * m_ucABlurredIntensityMap[(i - 1) + (j - 1)*width] + m_ucABlurredIntensityMap[(i + 1) + (j - 1)*width]
+				- 2 * m_ucABlurredIntensityMap[(i - 1) + (j)*width] + 2 * m_ucABlurredIntensityMap[(i + 1) + (j)*width]
+				- 1 * m_ucABlurredIntensityMap[(i - 1) + (j + 1)*width] + m_ucABlurredIntensityMap[(i + 1) + (j + 1)*width];
+			m_ucAGradientY[i + j*width] =
+				1 * m_ucABlurredIntensityMap[(i - 1) + (j - 1)*width] + 2 * m_ucABlurredIntensityMap[(i)+(j - 1)*width]
+				+ m_ucABlurredIntensityMap[(i + 1) + (j - 1)*width] - 1 * m_ucABlurredIntensityMap[(i - 1) + (j + 1)*width]
+				- 2 * m_ucABlurredIntensityMap[(i)+(j + 1)*width] - m_ucABlurredIntensityMap[(i + 1) + (j + 1)*width];
+		}
+	}
+
+
+	/*
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << m_ucAGradientX[i + j*width] << " ";
+	}
+	printf("\n");
+	}
+	*/
+	for (int j = 0; j < height; ++j) {
+	for (int i = 0; i < width; ++i) {
+	std::cout << m_ucAGradientY[i + j*width] << " ";
+	}
+	printf("\n");
+	}
+	printf("gradient\n");
+
 
 	return 1;
 }

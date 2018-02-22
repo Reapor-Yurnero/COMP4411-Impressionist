@@ -42,7 +42,9 @@ public:
 	Fl_Slider*			m_LineWidthSlider;
 	Fl_Slider*			m_LineAngleSlider;
 	Fl_Slider*			m_AlphaSlider;
+	Fl_Slider*			m_SpacingSlider;
 	Fl_Button*          m_ClearCanvasButton;
+	Fl_Button*			m_AutoPaintButtion;
 
 	// for RGB configuration dialog
 	Fl_Window*			m_RGBConfigDialog;
@@ -66,7 +68,8 @@ public:
 	int					getLineAngle();
 	void				setLineAngle(int angle);
 	double				getOpacity();
-	double	m_RScale, m_GScale, m_BScale;
+	double				m_RScale, m_GScale, m_BScale;
+	int					m_nSpacing;
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -80,7 +83,7 @@ private:
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
 	static Fl_Menu_Item		brushTypeMenu[NUM_BRUSH_TYPE+1];
-	static Fl_Menu_Item		strokeMenu[4];
+	static Fl_Menu_Item		strokeMenu[5];
 
 	static ImpressionistUI*	whoami(Fl_Menu_* o);
 
@@ -88,6 +91,7 @@ private:
 	// static
 	static void	cb_load_image(Fl_Menu_* o, void* v);
 	static void cb_load_another_image(Fl_Menu_* o, void* v);
+	static void cb_load_gradient_image(Fl_Menu_* o, void* v);
 	static void	cb_save_image(Fl_Menu_* o, void* v);
 	static void	cb_brushes(Fl_Menu_* o, void* v);
 	static void	cb_clear_canvas(Fl_Menu_* o, void* v);
@@ -109,6 +113,8 @@ private:
 	static void	cb_RScaleSlides(Fl_Widget* o, void* v);
 	static void	cb_GScaleSlides(Fl_Widget* o, void* v);
 	static void	cb_BScaleSlides(Fl_Widget* o, void* v);
+	static void	cb_SpacingSlides(Fl_Widget* o, void* v);
+	static void	cb_AutoPaintButton(Fl_Widget* o, void* v);
 };
 
 #endif

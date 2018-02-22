@@ -12,6 +12,7 @@
 #include <FL/gl.h>
 #include <GL/glu.h>
 #include <stdlib.h>
+#include <algorithm>
 
 class ImpressionistDoc;
 
@@ -32,7 +33,9 @@ public:
 
 	ImpressionistDoc *m_pDoc;
 
+	void AutoPaintTrigger();
 private:
+	void AutoPaint();
 	GLvoid* m_pPaintBitstart;
 	int		m_nDrawWidth,
 			m_nDrawHeight,

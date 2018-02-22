@@ -193,6 +193,16 @@ void ImpressionistUI::cb_load_another_image(Fl_Menu_ * o, void * v)
 	}
 }
 
+void ImpressionistUI::cb_load_gradient_image(Fl_Menu_ * o, void * v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->loadGradientImage(newfile);
+	}
+}
+
 
 //------------------------------------------------------------------
 // Brings up a file chooser and then saves the painted image
@@ -378,6 +388,16 @@ void ImpressionistUI::cb_BScaleSlides(Fl_Widget * o, void * v)
 
 }
 
+void ImpressionistUI::cb_SpacingSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nSpacing = int(((Fl_Slider *)o)->value());
+}
+
+void ImpressionistUI::cb_AutoPaintButton(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_paintView->AutoPaintTrigger();
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -471,6 +491,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
 		{ "&Load Another Image...",	FL_ALT + 'n', (Fl_Callback *)ImpressionistUI::cb_load_another_image },
+		{ "&Load Gradient Image...",	FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_load_gradient_image },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },	
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
@@ -506,10 +527,11 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
 };
 
 // Line Stroke Direction choice definition
-Fl_Menu_Item ImpressionistUI::strokeMenu[4] = {
+Fl_Menu_Item ImpressionistUI::strokeMenu[5] = {
 	{"Right Click/Angle Sidebar",	FL_ALT + '0', (Fl_Callback *)ImpressionistUI::cb_strokeChoice, (void *) 0},
 	{"Gradient",					FL_ALT + '1', (Fl_Callback *)ImpressionistUI::cb_strokeChoice, (void *) 1},
 	{"Cursor Driection",			FL_ALT + '2', (Fl_Callback *)ImpressionistUI::cb_strokeChoice, (void *) 2},
+	{"Another Gradient",			FL_ALT + '3', (Fl_Callback *)ImpressionistUI::cb_strokeChoice, (void *) 3},
 	{0}
 };
 
@@ -551,6 +573,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_RScale = 1.0;
 	m_GScale = 1.0;
 	m_BScale = 1.0;
+	m_nSpacing = 10;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -624,10 +647,28 @@ ImpressionistUI::ImpressionistUI() {
 		m_AlphaSlider->align(FL_ALIGN_RIGHT);
 		m_AlphaSlider->callback(cb_alphaSlides);
 
+		// Spacing slider for auto paint
+		m_SpacingSlider = new Fl_Value_Slider(10, 200, 200, 20, "Spacing");
+		m_SpacingSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_SpacingSlider->type(FL_HOR_NICE_SLIDER);
+		m_SpacingSlider->labelfont(FL_COURIER);
+		m_SpacingSlider->labelsize(12);
+		m_SpacingSlider->minimum(1);
+		m_SpacingSlider->maximum(20);
+		m_SpacingSlider->step(1);
+		m_SpacingSlider->value(m_nSpacing);
+		m_SpacingSlider->align(FL_ALIGN_RIGHT);
+		m_SpacingSlider->callback(cb_SpacingSlides);
+
+		// Auto Paint buttion
+		m_ClearCanvasButton = new Fl_Button(270, 196, 120, 25, "&Auto Paint");
+		m_ClearCanvasButton->user_data((void*)(this));
+		m_ClearCanvasButton->callback(cb_AutoPaintButton);
+
     m_brushDialog->end();	
 
-	// brush dialog definition
-	m_RGBConfigDialog = new Fl_Window(400, 150, "Brush Dialog");
+	// RGB config dialog definition
+	m_RGBConfigDialog = new Fl_Window(400, 150, "RGB Config");
 
 
 		// Add R scale slider to the dialog 
