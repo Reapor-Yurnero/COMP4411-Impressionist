@@ -265,6 +265,11 @@ void ImpressionistUI::cb_OriginalView(Fl_Menu_ * o, void * v)
 	whoami(o)->m_origView->refresh();
 }
 
+void ImpressionistUI::cb_RGBScale(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->m_RGBConfigDialog->show();
+}
+
 //-----------------------------------------------------------
 // Brings up an about dialog box
 // Called by the UI when the about menu item is chosen
@@ -344,6 +349,23 @@ void ImpressionistUI::cb_angleSlides(Fl_Widget * o, void * v)
 void ImpressionistUI::cb_alphaSlides(Fl_Widget * o, void * v)
 {
 	((ImpressionistUI*)(o->user_data()))->m_nOpacity = double(((Fl_Slider *)o)->value());
+}
+
+void ImpressionistUI::cb_RScaleSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_RScale = double(((Fl_Slider *)o)->value());
+}
+
+void ImpressionistUI::cb_GScaleSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_GScale = double(((Fl_Slider *)o)->value());
+
+}
+
+void ImpressionistUI::cb_BScaleSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_BScale = double(((Fl_Slider *)o)->value());
+
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -438,21 +460,23 @@ double ImpressionistUI::getOpacity()
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
-		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },
-		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes }, 
-		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
-		
+		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },	
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
 	{ "&Edit",		0, 0, 0, FL_SUBMENU },
 		{ "&Undo", FL_CTRL + 'z', (Fl_Callback *)ImpressionistUI::cb_undo },
 		{ "&Redo", FL_CTRL + 'y', (Fl_Callback *)ImpressionistUI::cb_redo },
-		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ 0 },
-	{ "&Advanced",		0, 0, 0, FL_SUBMENU },
+	{ "&Display",	0, 0, 0, FL_SUBMENU },
 		{ "&Show Original Image", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_OriginalView },
 		{ "&Show Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_EdgeView },
+		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
+		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		{ 0 }, 
+	{ "Options",	0, 0, 0, FL_SUBMENU },
+		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes },
+		{ "&RGB Config",	FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_RGBScale },
+		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },
@@ -509,11 +533,13 @@ ImpressionistUI::ImpressionistUI() {
     m_mainWindow->end();
 
 	// init values
-
 	m_nSize = 10;
 	m_nLineWidth = 1;
 	m_nLineAngle = 90;
 	m_nOpacity = 1.0;
+	m_RScale = 1.0;
+	m_GScale = 1.0;
+	m_BScale = 1.0;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -588,5 +614,50 @@ ImpressionistUI::ImpressionistUI() {
 		m_AlphaSlider->callback(cb_alphaSlides);
 
     m_brushDialog->end();	
+
+	// brush dialog definition
+	m_RGBConfigDialog = new Fl_Window(400, 150, "Brush Dialog");
+
+
+		// Add R scale slider to the dialog 
+		m_RScaleSlider = new Fl_Value_Slider(10, 10, 300, 20, "R Scale");
+		m_RScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_RScaleSlider->type(FL_HOR_NICE_SLIDER);
+		m_RScaleSlider->labelfont(FL_COURIER);
+		m_RScaleSlider->labelsize(12);
+		m_RScaleSlider->minimum(0);
+		m_RScaleSlider->maximum(1);
+		m_RScaleSlider->step(0.01);
+		m_RScaleSlider->value(m_RScale);
+		m_RScaleSlider->align(FL_ALIGN_RIGHT);
+		m_RScaleSlider->callback(cb_RScaleSlides);
+
+		// Add G scale slider to the dialog 
+		m_GScaleSlider = new Fl_Value_Slider(10, 40, 300, 20, "G Scale");
+		m_GScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_GScaleSlider->type(FL_HOR_NICE_SLIDER);
+		m_GScaleSlider->labelfont(FL_COURIER);
+		m_GScaleSlider->labelsize(12);
+		m_GScaleSlider->minimum(0);
+		m_GScaleSlider->maximum(1);
+		m_GScaleSlider->step(0.01);
+		m_GScaleSlider->value(m_GScale);
+		m_GScaleSlider->align(FL_ALIGN_RIGHT);
+		m_GScaleSlider->callback(cb_GScaleSlides);
+
+		// Add B scale slider to the dialog 
+		m_BScaleSlider = new Fl_Value_Slider(10, 70, 300, 20, "B Scale");
+		m_BScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_BScaleSlider->type(FL_HOR_NICE_SLIDER);
+		m_BScaleSlider->labelfont(FL_COURIER);
+		m_BScaleSlider->labelsize(12);
+		m_BScaleSlider->minimum(0);
+		m_BScaleSlider->maximum(1);
+		m_BScaleSlider->step(0.01);
+		m_BScaleSlider->value(m_BScale);
+		m_BScaleSlider->align(FL_ALIGN_RIGHT);
+		m_BScaleSlider->callback(cb_BScaleSlides);
+
+	m_RGBConfigDialog->end();
 
 }

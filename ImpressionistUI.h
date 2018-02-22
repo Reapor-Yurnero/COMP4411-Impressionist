@@ -44,6 +44,12 @@ public:
 	Fl_Slider*			m_AlphaSlider;
 	Fl_Button*          m_ClearCanvasButton;
 
+	// for RGB configuration dialog
+	Fl_Window*			m_RGBConfigDialog;
+	Fl_Slider*			m_RScaleSlider;
+	Fl_Slider*			m_GScaleSlider;
+	Fl_Slider*			m_BScaleSlider;
+
 	// Member functions
 	void				setDocument(ImpressionistDoc* doc);
 	ImpressionistDoc*	getDocument();
@@ -60,6 +66,7 @@ public:
 	int					getLineAngle();
 	void				setLineAngle(int angle);
 	double				getOpacity();
+	double	m_RScale, m_GScale, m_BScale;
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -89,6 +96,7 @@ private:
 	static void cb_swap(Fl_Menu_* o, void* v);
 	static void cb_EdgeView(Fl_Menu_* o, void* v);
 	static void cb_OriginalView(Fl_Menu_* o, void* v);
+	static void	cb_RGBScale(Fl_Menu_* o, void* v);
 	static void	cb_about(Fl_Menu_* o, void* v);
 	static void	cb_brushChoice(Fl_Widget* o, void* v);
 	static void	cb_clear_canvas_button(Fl_Widget* o, void* v);
@@ -97,6 +105,9 @@ private:
 	static void	cb_widthSlides(Fl_Widget* o, void* v);
 	static void	cb_angleSlides(Fl_Widget* o, void* v);
 	static void	cb_alphaSlides(Fl_Widget* o, void* v);
+	static void	cb_RScaleSlides(Fl_Widget* o, void* v);
+	static void	cb_GScaleSlides(Fl_Widget* o, void* v);
+	static void	cb_BScaleSlides(Fl_Widget* o, void* v);
 };
 
 #endif

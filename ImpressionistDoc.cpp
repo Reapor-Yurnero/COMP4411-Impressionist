@@ -110,6 +110,23 @@ void ImpressionistDoc::addHistory()
 	printf("add history on index %d\n", m_nHistoryIndex);
 }
 
+
+void ImpressionistDoc::swapview()
+
+{
+
+	unsigned char * temp = m_ucBitmap;
+
+	m_ucBitmap = m_ucPainting;
+
+	m_ucPainting = temp;
+
+	m_pUI->m_origView->refresh();
+
+	m_pUI->m_paintView->refresh();
+
+}
+
 void ImpressionistDoc::clearHistory()
 {
 	for (auto item : m_history) {
