@@ -305,7 +305,7 @@ void PaintView::CompareOldCurrent()
 
 void PaintView::AutoPaint()
 {
-	m_pDoc->clearCanvas();
+	m_pDoc->clearCanvas(); refresh();
 	//RestoreContent();
 	// printf("printfonce\n");
 	std::random_device rd;

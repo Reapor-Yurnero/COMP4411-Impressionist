@@ -42,10 +42,12 @@ void BlurBrush::BrushMove(const Point source, const Point target)
 	//std::cout << "source" << source.x << " " << source.y << std::endl;
 	//std::cout <<"target" << target.x << " " << target.y << std::endl;
 	//printf("%lf\n", dlg->getOpacity());
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBegin(GL_POINTS);
-	SetColor(source);
+	SetBlurredColor(source);
+ 
 
 	glVertex2d(target.x, target.y);
 
