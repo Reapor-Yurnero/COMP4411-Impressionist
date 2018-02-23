@@ -24,6 +24,8 @@ enum
 	BRUSH_SHARPEN,
 	BRUSH_WARP,
 	BRUSH_ERASER,
+	BRUSH_TRIANGLE,
+	BRUSH_SCATTERED_TRIANGLE,
 	NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 

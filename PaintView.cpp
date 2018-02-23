@@ -90,7 +90,7 @@ void PaintView::draw()
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
 	{
 		RestoreContent();
-		printf("NOevent\n");
+		//printf("NOevent\n");
 	}
 
 	if ( m_pDoc->m_ucPainting && isAnEvent) 

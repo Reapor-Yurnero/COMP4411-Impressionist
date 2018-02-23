@@ -154,7 +154,9 @@
     <ClCompile Include="ScatteredCircleBrush.cpp" />
     <ClCompile Include="ScatteredLineBrush.cpp" />
     <ClCompile Include="ScatteredPointBrush.cpp" />
+    <ClCompile Include="ScatteredTriangleBrush.cpp" />
     <ClCompile Include="SharpenBrush.cpp" />
+    <ClCompile Include="TriangleBrush.cpp" />
     <ClCompile Include="WarpBrush.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,7 +175,9 @@
     <ClInclude Include="ScatteredCircleBrush.h" />
     <ClInclude Include="ScatteredLineBrush.h" />
     <ClInclude Include="ScatteredPointBrush.h" />
+    <ClInclude Include="ScatteredTriangleBrush.h" />
     <ClInclude Include="SharpenBrush.h" />
+    <ClInclude Include="TriangleBrush.h" />
     <ClInclude Include="WarpBrush.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

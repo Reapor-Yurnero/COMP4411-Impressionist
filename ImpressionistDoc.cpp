@@ -21,6 +21,8 @@
 #include "ScatteredLineBrush.h"
 #include "EraserBrush.h"
 #include "BlurBrush.h"
+#include "TriangleBrush.h"
+#include "ScatteredTriangleBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -65,13 +67,15 @@ ImpressionistDoc::ImpressionistDoc()
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
 	ImpBrush::c_pBrushes[BRUSH_BLUR]
-		= new BlurBrush(this, "Lines");  // need to be revised
-	ImpBrush::c_pBrushes[BRUSH_SHARPEN]
-		= new LineBrush(this, "Lines");  // need to be revised
+		= new BlurBrush(this, "Blur");  // need to be revised
+	ImpBrush::c_pBrushes[BRUSH_TRIANGLE]
+		= new TriangleBrush(this, "Triangles");  // need to be revised
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_TRIANGLE]
+		= new ScatteredTriangleBrush(this, "Scattered Triangles");  // need to be revised
 	ImpBrush::c_pBrushes[BRUSH_WARP]
-		= new LineBrush(this, "Lines");  // need to be revised
+		= new LineBrush(this, "Warps");  // need to be revised
 	ImpBrush::c_pBrushes[BRUSH_ERASER]
-		= new EraserBrush(this, "Lines");  // need to be revised
+		= new EraserBrush(this, "Erasers");  // need to be revised
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -724,7 +728,6 @@ int ImpressionistDoc::loadEdgeImage(char * iname)
 	}
 	if (m_ucAnotherEdgeMap) delete[] m_ucAnotherEdgeMap;
 	m_ucAnotherEdgeMap = data;
-	printf("load!\n");
 	//for (int i = 0; i < width*height; ++i) {printf("%d %d %d\n", m_ucAnotherEdgeMap[3 * i], m_ucAnotherEdgeMap[3 * i+1], m_ucAnotherEdgeMap[3 * i+2]);}
 	return 1;
 }
