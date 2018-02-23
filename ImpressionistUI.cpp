@@ -425,6 +425,11 @@ void ImpressionistUI::cb_SpacingSlides(Fl_Widget * o, void * v)
 	((ImpressionistUI*)(o->user_data()))->m_nSpacing = int(((Fl_Slider *)o)->value());
 }
 
+void ImpressionistUI::cb_ThresholdSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nThreshold = int(((Fl_Slider *)o)->value());
+}
+
 void ImpressionistUI::cb_AutoPaintButton(Fl_Widget * o, void * v)
 {
 	((ImpressionistUI*)(o->user_data()))->m_paintView->AutoPaintTrigger();
@@ -453,6 +458,12 @@ void ImpressionistUI::cb_ClipAnotherButton(Fl_Widget * o, void * v)
 	bool & clipanother = ((ImpressionistUI*)(o->user_data()))->m_nClipAnother;
 	if (clipanother == true) clipanother = false;
 	else clipanother = true;
+}
+
+void ImpressionistUI::cb_ThresholdButton(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->updateEdgeMap();
+	((ImpressionistUI*)(o->user_data()))->m_origView->refresh();
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -582,13 +593,16 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Points",			FL_ALT+'p', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_POINTS},
   {"Lines",				FL_ALT+'l', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_LINES},
   {"Circles",			FL_ALT+'c', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_CIRCLES},
+  {"Rings",			FL_ALT + 'r', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_RING },
+  {"Triangles",			FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_TRIANGLE },
   {"Scattered Points",	FL_ALT+'q', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_POINTS},
   {"Scattered Lines",	FL_ALT+'m', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_LINES},
   {"Scattered Circles",	FL_ALT+'d', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
-  { "Eraser",	FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_ERASER },
-  { "Blur",	FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_BLUR },
-  { "Sharpen",	FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SHARPEN },
-  { "Warp",	FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_WARP },
+  {"Scattered Rings",	FL_ALT + 'x', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_RING },
+  {"Scattered Triangles",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_TRIANGLE },
+  { "Eraser",	FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_ERASER },
+  { "Blur",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_BLUR },
+  { "Warp",	FL_ALT + 'w', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_WARP },
   {0}
 };
 
@@ -640,9 +654,10 @@ ImpressionistUI::ImpressionistUI() {
 	m_GScale = 1.0;
 	m_BScale = 1.0;
 	m_nSpacing = 10;
-	m_nDimvalue = 1.0;
+	m_nDimvalue = 0.0;
 	m_nClipped = false;
 	m_nClipAnother = false;
+	m_nThreshold = 128;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -761,6 +776,24 @@ ImpressionistUI::ImpressionistUI() {
 	m_ClipAnotherButton = new Fl_Light_Button(150, 256, 120, 25, "&Edge Graph");
 	m_ClipAnotherButton->user_data((void*)(this));
 	m_ClipAnotherButton->callback(cb_ClipAnotherButton);
+
+		// Threshold slider
+		m_ThresholdSlider = new Fl_Value_Slider(10, 290, 180, 20, "Threshold");
+		m_ThresholdSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ThresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_ThresholdSlider->labelfont(FL_COURIER);
+		m_ThresholdSlider->labelsize(12);
+		m_ThresholdSlider->minimum(0);
+		m_ThresholdSlider->maximum(255);
+		m_ThresholdSlider->step(1);
+		m_ThresholdSlider->value(m_nThreshold);
+		m_ThresholdSlider->align(FL_ALIGN_RIGHT);
+		m_ThresholdSlider->callback(cb_ThresholdSlides);
+
+		// Apply Threshold buttion
+		m_ThresholdButton = new Fl_Button(270, 285, 120, 25, "&Apply Threshold");
+		m_ThresholdButton->user_data((void*)(this));
+		m_ThresholdButton->callback(cb_ThresholdButton);
 
     m_brushDialog->end();	
 

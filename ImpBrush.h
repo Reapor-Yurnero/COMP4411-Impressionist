@@ -24,6 +24,10 @@ enum
 	BRUSH_SHARPEN,
 	BRUSH_WARP,
 	BRUSH_ERASER,
+	BRUSH_TRIANGLE,
+	BRUSH_SCATTERED_TRIANGLE,
+	BRUSH_RING,
+	BRUSH_SCATTERED_RING,
 	NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 
@@ -53,7 +57,7 @@ public:
 
 	// according to the source image and the position, determine the draw color
 	void SetColor( const Point source );
-	void SetColor(const Point source, double opacity);
+	void SetBlurredColor(const Point source);
 
 	// get Doc to communicate with it
 	ImpressionistDoc* GetDocument( void );

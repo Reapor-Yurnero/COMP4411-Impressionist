@@ -90,7 +90,7 @@ void PaintView::draw()
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
 	{
 		RestoreContent();
-		printf("NOevent\n");
+		//printf("NOevent\n");
 	}
 
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
@@ -127,17 +127,18 @@ void PaintView::draw()
 			break;
 		case RIGHT_MOUSE_DRAG:
 			RightEnd = target;
+			/*
 			glLineWidth(5);
 			glBegin(GL_LINES);
 			glColor3f(0, 0, 1);
 			glVertex2d(RightStart.x, RightStart.y);
 			glVertex2d(RightEnd.x, RightEnd.y);
-			glEnd();
+			glEnd();*/
 			//RestoreContent();
 			break;
 
 		case RIGHT_MOUSE_UP:
-			//RestoreContent();
+			//refresh();
 			RightEnd = target;
 			if ((m_pDoc->getBrushType() == 1 || m_pDoc->getBrushType() == 4) && m_pDoc->m_nStrokeMode == 0) {
 				//std::cout << RightStart.x << " " << RightStart.y << std::endl;
@@ -315,7 +316,7 @@ void PaintView::CompareOldCurrent()
 
 void PaintView::AutoPaint()
 {
-	m_pDoc->clearCanvas();
+	m_pDoc->clearCanvas(); refresh();
 	//RestoreContent();
 	// printf("printfonce\n");
 	std::random_device rd;

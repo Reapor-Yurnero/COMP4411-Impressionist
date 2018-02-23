@@ -20,6 +20,11 @@
 #include "LineBrush.h"
 #include "ScatteredLineBrush.h"
 #include "EraserBrush.h"
+#include "BlurBrush.h"
+#include "TriangleBrush.h"
+#include "ScatteredTriangleBrush.h"
+#include "RingBrush.h"
+#include "ScatteredRingBrush.h"
 #include "WarpBrush.h"
 
 
@@ -65,13 +70,19 @@ ImpressionistDoc::ImpressionistDoc()
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
 	ImpBrush::c_pBrushes[BRUSH_BLUR]
-		= new LineBrush(this, "Lines");  // need to be revised
-	ImpBrush::c_pBrushes[BRUSH_SHARPEN]
-		= new LineBrush(this, "Lines");  // need to be revised
+		= new BlurBrush(this, "Blur");  
+	ImpBrush::c_pBrushes[BRUSH_TRIANGLE]
+		= new TriangleBrush(this, "Triangles"); 
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_TRIANGLE]
+		= new ScatteredTriangleBrush(this, "Scattered Triangles"); 
+	ImpBrush::c_pBrushes[BRUSH_RING]
+		= new RingBrush(this, "Rings");  
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_RING]
+		= new ScatteredRingBrush(this, "Scattered Rings");  
 	ImpBrush::c_pBrushes[BRUSH_WARP]
-		= new WarpBrush(this, "Warp");  // need to be revised
+		= new WarpBrush(this, "Warps");
 	ImpBrush::c_pBrushes[BRUSH_ERASER]
-		= new EraserBrush(this, "Lines");  // need to be revised
+		= new EraserBrush(this, "Erasers"); 
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -737,7 +748,6 @@ int ImpressionistDoc::loadEdgeImage(char * iname)
 	}
 	if (m_ucAnotherEdgeMap) delete[] m_ucAnotherEdgeMap;
 	m_ucAnotherEdgeMap = data;
-	printf("load!\n");
 	//for (int i = 0; i < width*height; ++i) {printf("%d %d %d\n", m_ucAnotherEdgeMap[3 * i], m_ucAnotherEdgeMap[3 * i+1], m_ucAnotherEdgeMap[3 * i+2]);}
 	return 1;
 }
@@ -847,5 +857,16 @@ void ImpressionistDoc::disolve()
 		m_ucPainting[3 * i+2] = m_ucBitmap[3 * i+2] * 0.5 + m_ucGradientBitmap[3 * i+2] * 0.5;
 	}
 	m_pUI->m_paintView->refresh();
+}
+
+void ImpressionistDoc::updateEdgeMap()
+{
+	int width = m_nWidth; int height = m_nHeight;
+	int threshold = m_pUI->m_nThreshold;
+	for (int i = 0; i < width; ++i) {
+		for (int j = 0; j < height; ++j) {
+			m_ucEdgeMap[3 * (i + j*width)] = m_ucEdgeMap[3 * (i + j*width) + 1] = m_ucEdgeMap[3 * (i + j*width) + 2] = m_ucGradientNorm[i + j*width] > threshold ? 255 : 0;
+		}
+	}
 }
 
