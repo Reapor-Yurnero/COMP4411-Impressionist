@@ -296,6 +296,11 @@ void ImpressionistUI::cb_RGBScale(Fl_Menu_ * o, void * v)
 	whoami(o)->m_RGBConfigDialog->show();
 }
 
+void ImpressionistUI::cb_Disolve(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->getDocument()->disolve();
+}
+
 //-----------------------------------------------------------
 // Brings up an about dialog box
 // Called by the UI when the about menu item is chosen
@@ -507,7 +512,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
 		{ "&Load Another Image...",	FL_ALT + 'n', (Fl_Callback *)ImpressionistUI::cb_load_another_image },
-		{ "&Load Gradient Image...",	FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_load_gradient_image },
+		{ "&Load Gradient/Disolve Image...",	FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_load_gradient_image },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },	
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
@@ -518,13 +523,14 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&Display",	0, 0, 0, FL_SUBMENU },
 		{ "&Show Original Image", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_OriginalView },
 		{ "&Show Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_EdgeView },
-		{ "&Show Gradient Image", FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_GradientView },
+		{ "&Show Gradient/Disolve Image", FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_GradientView },
 		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		{ 0 }, 
-	{ "Options",	0, 0, 0, FL_SUBMENU },
+	{ "Draw",	0, 0, 0, FL_SUBMENU },
 		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes },
 		{ "&RGB Config",	FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_RGBScale },
+		{ "&Disolve",	FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_Disolve },
 		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },

@@ -91,6 +91,7 @@ public:
 	// Get intensity value from a RGB pixel
 	GLubyte GetIntensity(GLubyte r, GLubyte g, GLubyte b);
 	void	applyDim();
+	void	disolve();
 
 
 

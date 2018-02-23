@@ -678,13 +678,13 @@ int ImpressionistDoc::loadGradientImage(char * iname)
 	}
 	printf("\n");
 	}
-	*/
+	
 	for (int j = 0; j < height; ++j) {
 	for (int i = 0; i < width; ++i) {
 	std::cout << m_ucAGradientY[i + j*width] << " ";
 	}
 	printf("\n");
-	}
+	}*/
 	printf("gradient\n");
 
 
@@ -781,6 +781,20 @@ void ImpressionistDoc::applyDim()
 		m_ucPainting[3 * i+2] = m_ucBitmap[3 * i+2] * dim;
 	}
 	//printf("dimend\n");
+	m_pUI->m_paintView->refresh();
+}
+
+void ImpressionistDoc::disolve()
+{
+	int w = m_nWidth;
+	int h = m_nHeight;
+	if (m_ucPainting) delete[] m_ucPainting;
+	m_ucPainting = new GLubyte[w*h * 3];
+	for (int i = 0; i < w*h; ++i) {
+		m_ucPainting[3 * i] = m_ucBitmap[3 * i] * 0.5 + m_ucGradientBitmap[3 * i] * 0.5;
+		m_ucPainting[3 * i+1] = m_ucBitmap[3 * i+1] * 0.5 + m_ucGradientBitmap[3 * i+1] * 0.5;
+		m_ucPainting[3 * i+2] = m_ucBitmap[3 * i+2] * 0.5 + m_ucGradientBitmap[3 * i+2] * 0.5;
+	}
 	m_pUI->m_paintView->refresh();
 }
 

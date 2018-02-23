@@ -106,6 +106,7 @@ private:
 	static void cb_OriginalView(Fl_Menu_* o, void* v);
 	static void cb_GradientView(Fl_Menu_* o, void* v);
 	static void	cb_RGBScale(Fl_Menu_* o, void* v);
+	static void	cb_Disolve(Fl_Menu_* o, void* v);
 	static void	cb_about(Fl_Menu_* o, void* v);
 	static void	cb_brushChoice(Fl_Widget* o, void* v);
 	static void	cb_clear_canvas_button(Fl_Widget* o, void* v);
