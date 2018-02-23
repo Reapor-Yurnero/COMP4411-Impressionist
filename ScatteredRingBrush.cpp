@@ -18,6 +18,10 @@ ScatteredRingBrush::ScatteredRingBrush(ImpressionistDoc* pDoc, char* name) :
 
 void ScatteredRingBrush::BrushBegin(const Point source, const Point target)
 {
+	ImpressionistDoc* pDoc = GetDocument();
+	ImpressionistUI* dlg = pDoc->m_pUI;
+	int line_width = dlg->getLineWidth();
+	glLineWidth((float)line_width);
 	BrushMove(source, target);
 }
 
