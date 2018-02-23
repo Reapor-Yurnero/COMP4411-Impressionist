@@ -18,6 +18,10 @@ public:
 	void BrushMove(const Point source, const Point target);
 	void BrushEnd(const Point source, const Point target);
 	char* BrushName(void);
+private:
+	unsigned char *m_pData;
+	int m_nHeight, m_nWidth;
+	Point m_startPoint;
 };
 
 #endif

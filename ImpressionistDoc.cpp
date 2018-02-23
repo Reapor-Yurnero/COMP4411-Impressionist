@@ -20,6 +20,7 @@
 #include "LineBrush.h"
 #include "ScatteredLineBrush.h"
 #include "EraserBrush.h"
+#include "WarpBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -68,7 +69,7 @@ ImpressionistDoc::ImpressionistDoc()
 	ImpBrush::c_pBrushes[BRUSH_SHARPEN]
 		= new LineBrush(this, "Lines");  // need to be revised
 	ImpBrush::c_pBrushes[BRUSH_WARP]
-		= new LineBrush(this, "Lines");  // need to be revised
+		= new WarpBrush(this, "Warp");  // need to be revised
 	ImpBrush::c_pBrushes[BRUSH_ERASER]
 		= new EraserBrush(this, "Lines");  // need to be revised
 
@@ -77,6 +78,11 @@ ImpressionistDoc::ImpressionistDoc()
 	// default 0 mode for stroke direction
 	m_nStrokeMode = 0;
 
+}
+
+ImpressionistDoc::~ImpressionistDoc()
+{
+	clearHistory();
 }
 
 
@@ -126,7 +132,7 @@ void ImpressionistDoc::addHistory()
 }
 
 
-void ImpressionistDoc::swapview()
+void ImpressionistDoc::swapView()
 
 {
 
@@ -142,11 +148,19 @@ void ImpressionistDoc::swapview()
 
 }
 
+void ImpressionistDoc::mirrorView()
+{
+	memcpy(m_ucPainting, m_ucBitmap, 3 * m_nHeight * m_nWidth);
+	addHistory();
+	m_pUI->m_paintView->refresh();
+}
+
 void ImpressionistDoc::clearHistory()
 {
 	for (auto item : m_history) {
 		delete[] item;
 	}
+	m_history.clear();
 	m_nHistoryIndex = 0;
 	printf("clear history\n");
 }

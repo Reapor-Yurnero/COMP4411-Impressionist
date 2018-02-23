@@ -40,6 +40,10 @@ public:
 
 	std::vector<int> UpdatePos;
 
+	int getHeight();
+
+	int getWidth();
+
 private:
 	void CompareOldCurrent();
 	void AutoPaint();

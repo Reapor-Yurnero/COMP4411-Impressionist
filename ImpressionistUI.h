@@ -107,6 +107,7 @@ private:
 	static void cb_undo(Fl_Menu_* o, void* v);
 	static void cb_redo(Fl_Menu_* o, void* v);
 	static void cb_swap(Fl_Menu_* o, void* v);
+	static void cb_mirror(Fl_Menu_* o, void* v);
 	static void cb_EdgeView(Fl_Menu_* o, void* v);
 	static void cb_OriginalView(Fl_Menu_* o, void* v);
 	static void cb_GradientView(Fl_Menu_* o, void* v);

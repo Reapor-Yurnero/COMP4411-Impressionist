@@ -280,7 +280,12 @@ void ImpressionistUI::cb_redo(Fl_Menu_* o, void* v)
 
 void ImpressionistUI::cb_swap(Fl_Menu_ * o, void * v)
 {
-	whoami(o)->getDocument()->swapview();
+	whoami(o)->getDocument()->swapView();
+}
+
+void ImpressionistUI::cb_mirror(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->getDocument()->mirrorView();
 }
 
 void ImpressionistUI::cb_EdgeView(Fl_Menu_ * o, void * v)
@@ -558,6 +563,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Show Gradient/Disolve Image", FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_GradientView },
 		{ "&Show Another Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_AnotherEdgeView },
 		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
+		{ "&Mirror", FL_CTRL + 'm', (Fl_Callback *)ImpressionistUI::cb_mirror },
 		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		{ 0 }, 
 	{ "Draw",	0, 0, 0, FL_SUBMENU },
@@ -603,26 +609,26 @@ Fl_Menu_Item ImpressionistUI::strokeMenu[5] = {
 ImpressionistUI::ImpressionistUI() {
 	// Create the main window
 	m_mainWindow = new Fl_Window(600, 300, "Impressionist");
-		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
-		// install menu bar
-		m_menubar = new Fl_Menu_Bar(0, 0, 600, 25);
-		m_menubar->menu(menuitems);
+	m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
+											// install menu bar
+	m_menubar = new Fl_Menu_Bar(0, 0, 600, 25);
+	m_menubar->menu(menuitems);
 
-		// Create a group that will hold two sub windows inside the main
-		// window
-		Fl_Group* group = new Fl_Group(0, 25, 600, 275);
+	// Create a group that will hold two sub windows inside the main
+	// window
+	Fl_Group* group = new Fl_Group(0, 25, 600, 275);
 
-			// install paint view window
-			m_paintView = new PaintView(300, 25, 300, 275, "This is the paint view");//0jon
-			m_paintView->box(FL_DOWN_FRAME);
+	// install paint view window
+	m_paintView = new PaintView(300, 25, 300, 275, "This is the paint view");//0jon
+	m_paintView->box(FL_DOWN_FRAME);
 
-			// install original view window
-			m_origView = new OriginalView(0, 25, 300, 275, "This is the orig view");//300jon
-			m_origView->box(FL_DOWN_FRAME);
-			m_origView->deactivate();
+	// install original view window
+	m_origView = new OriginalView(0, 25, 300, 275, "This is the orig view");//300jon
+	m_origView->box(FL_DOWN_FRAME);
+	m_origView->deactivate();
 
-		group->end();
-		Fl_Group::current()->resizable(group);
+	group->end();
+	Fl_Group::current()->resizable(group);
     m_mainWindow->end();
 
 	// init values
@@ -640,121 +646,121 @@ ImpressionistUI::ImpressionistUI() {
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
-		// Add a brush type choice to the dialog
-		m_BrushTypeChoice = new Fl_Choice(50,10,150,25,"&Brush");
-		m_BrushTypeChoice->user_data((void*)(this));	// record self to be used by static callback functions
-		m_BrushTypeChoice->menu(brushTypeMenu);
-		m_BrushTypeChoice->callback(cb_brushChoice);
+	// Add a brush type choice to the dialog
+	m_BrushTypeChoice = new Fl_Choice(50, 10, 150, 25, "&Brush");
+	m_BrushTypeChoice->user_data((void*)(this));	// record self to be used by static callback functions
+	m_BrushTypeChoice->menu(brushTypeMenu);
+	m_BrushTypeChoice->callback(cb_brushChoice);
 
-		m_ClearCanvasButton = new Fl_Button(240,10,150,25,"&Clear Canvas");
-		m_ClearCanvasButton->user_data((void*)(this));
-		m_ClearCanvasButton->callback(cb_clear_canvas_button);
+	m_ClearCanvasButton = new Fl_Button(240, 10, 150, 25, "&Clear Canvas");
+	m_ClearCanvasButton->user_data((void*)(this));
+	m_ClearCanvasButton->callback(cb_clear_canvas_button);
 
-		// Add a stroke direction choice menu
-		m_StrokeChoice = new Fl_Choice(145, 45, 210, 25, "&Line Stroke Direction");
-		m_StrokeChoice->user_data((void*)(this));
-		m_StrokeChoice->menu(strokeMenu);
-		m_StrokeChoice->callback(cb_strokeChoice);
-		
+	// Add a stroke direction choice menu
+	m_StrokeChoice = new Fl_Choice(145, 45, 210, 25, "&Line Stroke Direction");
+	m_StrokeChoice->user_data((void*)(this));
+	m_StrokeChoice->menu(strokeMenu);
+	m_StrokeChoice->callback(cb_strokeChoice);
 
 
-		// Add brush size slider to the dialog 
-		m_BrushSizeSlider = new Fl_Value_Slider(10, 80, 300, 20, "Size");
-		m_BrushSizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_BrushSizeSlider->type(FL_HOR_NICE_SLIDER);
-        m_BrushSizeSlider->labelfont(FL_COURIER);
-        m_BrushSizeSlider->labelsize(12);
-		m_BrushSizeSlider->minimum(1);
-		m_BrushSizeSlider->maximum(40);
-		m_BrushSizeSlider->step(1);
-		m_BrushSizeSlider->value(m_nSize);
-		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
-		m_BrushSizeSlider->callback(cb_sizeSlides);
 
-		// Add line width slider to the dialog
-		m_LineWidthSlider = new Fl_Value_Slider(10, 110, 300, 20, "Line Width");
-		m_LineWidthSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_LineWidthSlider->type(FL_HOR_NICE_SLIDER);
-		m_LineWidthSlider->labelfont(FL_COURIER);
-		m_LineWidthSlider->labelsize(12);
-		m_LineWidthSlider->minimum(1);
-		m_LineWidthSlider->maximum(40);
-		m_LineWidthSlider->step(1);
-		m_LineWidthSlider->value(m_nLineWidth);
-		m_LineWidthSlider->align(FL_ALIGN_RIGHT);
-		m_LineWidthSlider->callback(cb_widthSlides);
+	// Add brush size slider to the dialog 
+	m_BrushSizeSlider = new Fl_Value_Slider(10, 80, 300, 20, "Size");
+	m_BrushSizeSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_BrushSizeSlider->type(FL_HOR_NICE_SLIDER);
+	m_BrushSizeSlider->labelfont(FL_COURIER);
+	m_BrushSizeSlider->labelsize(12);
+	m_BrushSizeSlider->minimum(1);
+	m_BrushSizeSlider->maximum(40);
+	m_BrushSizeSlider->step(1);
+	m_BrushSizeSlider->value(m_nSize);
+	m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
+	m_BrushSizeSlider->callback(cb_sizeSlides);
 
-		// Add line angle slider to the dialog
-		m_LineAngleSlider = new Fl_Value_Slider(10, 140, 300, 20, "Line Angle");
-		m_LineAngleSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_LineAngleSlider->type(FL_HOR_NICE_SLIDER);
-		m_LineAngleSlider->labelfont(FL_COURIER);
-		m_LineAngleSlider->labelsize(12);
-		m_LineAngleSlider->minimum(0);
-		m_LineAngleSlider->maximum(179);
-		m_LineAngleSlider->step(1);
-		m_LineAngleSlider->value(m_nLineAngle);
-		m_LineAngleSlider->align(FL_ALIGN_RIGHT);
-		m_LineAngleSlider->callback(cb_angleSlides);
+	// Add line width slider to the dialog
+	m_LineWidthSlider = new Fl_Value_Slider(10, 110, 300, 20, "Line Width");
+	m_LineWidthSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_LineWidthSlider->type(FL_HOR_NICE_SLIDER);
+	m_LineWidthSlider->labelfont(FL_COURIER);
+	m_LineWidthSlider->labelsize(12);
+	m_LineWidthSlider->minimum(1);
+	m_LineWidthSlider->maximum(40);
+	m_LineWidthSlider->step(1);
+	m_LineWidthSlider->value(m_nLineWidth);
+	m_LineWidthSlider->align(FL_ALIGN_RIGHT);
+	m_LineWidthSlider->callback(cb_widthSlides);
 
-		// Add alpha slider to the dialog
-		m_AlphaSlider = new Fl_Value_Slider(10, 170, 300, 20, "Alpha");
-		m_AlphaSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_AlphaSlider->type(FL_HOR_NICE_SLIDER);
-		m_AlphaSlider->labelfont(FL_COURIER);
-		m_AlphaSlider->labelsize(12);
-		m_AlphaSlider->minimum(0);
-		m_AlphaSlider->maximum(1);
-		m_AlphaSlider->step(0.01);
-		m_AlphaSlider->value(m_nOpacity);
-		m_AlphaSlider->align(FL_ALIGN_RIGHT);
-		m_AlphaSlider->callback(cb_alphaSlides);
+	// Add line angle slider to the dialog
+	m_LineAngleSlider = new Fl_Value_Slider(10, 140, 300, 20, "Line Angle");
+	m_LineAngleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_LineAngleSlider->type(FL_HOR_NICE_SLIDER);
+	m_LineAngleSlider->labelfont(FL_COURIER);
+	m_LineAngleSlider->labelsize(12);
+	m_LineAngleSlider->minimum(0);
+	m_LineAngleSlider->maximum(179);
+	m_LineAngleSlider->step(1);
+	m_LineAngleSlider->value(m_nLineAngle);
+	m_LineAngleSlider->align(FL_ALIGN_RIGHT);
+	m_LineAngleSlider->callback(cb_angleSlides);
 
-		// Spacing slider for auto paint
-		m_SpacingSlider = new Fl_Value_Slider(10, 200, 200, 20, "Spacing");
-		m_SpacingSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_SpacingSlider->type(FL_HOR_NICE_SLIDER);
-		m_SpacingSlider->labelfont(FL_COURIER);
-		m_SpacingSlider->labelsize(12);
-		m_SpacingSlider->minimum(1);
-		m_SpacingSlider->maximum(20);
-		m_SpacingSlider->step(1);
-		m_SpacingSlider->value(m_nSpacing);
-		m_SpacingSlider->align(FL_ALIGN_RIGHT);
-		m_SpacingSlider->callback(cb_SpacingSlides);
+	// Add alpha slider to the dialog
+	m_AlphaSlider = new Fl_Value_Slider(10, 170, 300, 20, "Alpha");
+	m_AlphaSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_AlphaSlider->type(FL_HOR_NICE_SLIDER);
+	m_AlphaSlider->labelfont(FL_COURIER);
+	m_AlphaSlider->labelsize(12);
+	m_AlphaSlider->minimum(0);
+	m_AlphaSlider->maximum(1);
+	m_AlphaSlider->step(0.01);
+	m_AlphaSlider->value(m_nOpacity);
+	m_AlphaSlider->align(FL_ALIGN_RIGHT);
+	m_AlphaSlider->callback(cb_alphaSlides);
 
-		// Auto Paint buttion
-		m_AutoPaintButton = new Fl_Button(270, 196, 120, 25, "&Auto Paint");
-		m_AutoPaintButton->user_data((void*)(this));
-		m_AutoPaintButton->callback(cb_AutoPaintButton);
+	// Spacing slider for auto paint
+	m_SpacingSlider = new Fl_Value_Slider(10, 200, 200, 20, "Spacing");
+	m_SpacingSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_SpacingSlider->type(FL_HOR_NICE_SLIDER);
+	m_SpacingSlider->labelfont(FL_COURIER);
+	m_SpacingSlider->labelsize(12);
+	m_SpacingSlider->minimum(1);
+	m_SpacingSlider->maximum(20);
+	m_SpacingSlider->step(1);
+	m_SpacingSlider->value(m_nSpacing);
+	m_SpacingSlider->align(FL_ALIGN_RIGHT);
+	m_SpacingSlider->callback(cb_SpacingSlides);
 
-		// Dim slider
-		m_DimSlider = new Fl_Value_Slider(10, 230, 150, 20, "Dimmed Canvas");
-		m_DimSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_DimSlider->type(FL_HOR_NICE_SLIDER);
-		m_DimSlider->labelfont(FL_COURIER);
-		m_DimSlider->labelsize(12);
-		m_DimSlider->minimum(0);
-		m_DimSlider->maximum(1);
-		m_DimSlider->step(0.01);
-		m_DimSlider->value(m_nDimvalue);
-		m_DimSlider->align(FL_ALIGN_RIGHT);
-		m_DimSlider->callback(cb_DimSlides);
+	// Auto Paint buttion
+	m_AutoPaintButton = new Fl_Button(270, 196, 120, 25, "&Auto Paint");
+	m_AutoPaintButton->user_data((void*)(this));
+	m_AutoPaintButton->callback(cb_AutoPaintButton);
 
-		// Dim Apply buttion
-		m_DimButton = new Fl_Button(270, 226, 120, 25, "&Apply Dim");
-		m_DimButton->user_data((void*)(this));
-		m_DimButton->callback(cb_DimButton);
+	// Dim slider
+	m_DimSlider = new Fl_Value_Slider(10, 230, 150, 20, "Dimmed Canvas");
+	m_DimSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_DimSlider->type(FL_HOR_NICE_SLIDER);
+	m_DimSlider->labelfont(FL_COURIER);
+	m_DimSlider->labelsize(12);
+	m_DimSlider->minimum(0);
+	m_DimSlider->maximum(1);
+	m_DimSlider->step(0.01);
+	m_DimSlider->value(m_nDimvalue);
+	m_DimSlider->align(FL_ALIGN_RIGHT);
+	m_DimSlider->callback(cb_DimSlides);
 
-		// Clip buttion
-		m_ClipButton = new Fl_Light_Button(270, 256, 120, 25, "&Clipped Edge");
-		m_ClipButton->user_data((void*)(this));
-		m_ClipButton->callback(cb_ClipButton);
+	// Dim Apply buttion
+	m_DimButton = new Fl_Button(270, 226, 120, 25, "&Apply Dim");
+	m_DimButton->user_data((void*)(this));
+	m_DimButton->callback(cb_DimButton);
 
-		// Clip Another buttion
-		m_ClipAnotherButton = new Fl_Light_Button(150, 256, 120, 25, "&Edge Graph");
-		m_ClipAnotherButton->user_data((void*)(this));
-		m_ClipAnotherButton->callback(cb_ClipAnotherButton);
+	// Clip buttion
+	m_ClipButton = new Fl_Light_Button(270, 256, 120, 25, "&Clipped Edge");
+	m_ClipButton->user_data((void*)(this));
+	m_ClipButton->callback(cb_ClipButton);
+
+	// Clip Another buttion
+	m_ClipAnotherButton = new Fl_Light_Button(150, 256, 120, 25, "&Edge Graph");
+	m_ClipAnotherButton->user_data((void*)(this));
+	m_ClipAnotherButton->callback(cb_ClipAnotherButton);
 
     m_brushDialog->end();	
 
@@ -762,44 +768,44 @@ ImpressionistUI::ImpressionistUI() {
 	m_RGBConfigDialog = new Fl_Window(400, 150, "RGB Config");
 
 
-		// Add R scale slider to the dialog 
-		m_RScaleSlider = new Fl_Value_Slider(10, 10, 300, 20, "R Scale");
-		m_RScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_RScaleSlider->type(FL_HOR_NICE_SLIDER);
-		m_RScaleSlider->labelfont(FL_COURIER);
-		m_RScaleSlider->labelsize(12);
-		m_RScaleSlider->minimum(0);
-		m_RScaleSlider->maximum(1);
-		m_RScaleSlider->step(0.01);
-		m_RScaleSlider->value(m_RScale);
-		m_RScaleSlider->align(FL_ALIGN_RIGHT);
-		m_RScaleSlider->callback(cb_RScaleSlides);
+	// Add R scale slider to the dialog 
+	m_RScaleSlider = new Fl_Value_Slider(10, 10, 300, 20, "R Scale");
+	m_RScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_RScaleSlider->type(FL_HOR_NICE_SLIDER);
+	m_RScaleSlider->labelfont(FL_COURIER);
+	m_RScaleSlider->labelsize(12);
+	m_RScaleSlider->minimum(0);
+	m_RScaleSlider->maximum(1);
+	m_RScaleSlider->step(0.01);
+	m_RScaleSlider->value(m_RScale);
+	m_RScaleSlider->align(FL_ALIGN_RIGHT);
+	m_RScaleSlider->callback(cb_RScaleSlides);
 
-		// Add G scale slider to the dialog 
-		m_GScaleSlider = new Fl_Value_Slider(10, 40, 300, 20, "G Scale");
-		m_GScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_GScaleSlider->type(FL_HOR_NICE_SLIDER);
-		m_GScaleSlider->labelfont(FL_COURIER);
-		m_GScaleSlider->labelsize(12);
-		m_GScaleSlider->minimum(0);
-		m_GScaleSlider->maximum(1);
-		m_GScaleSlider->step(0.01);
-		m_GScaleSlider->value(m_GScale);
-		m_GScaleSlider->align(FL_ALIGN_RIGHT);
-		m_GScaleSlider->callback(cb_GScaleSlides);
+	// Add G scale slider to the dialog 
+	m_GScaleSlider = new Fl_Value_Slider(10, 40, 300, 20, "G Scale");
+	m_GScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_GScaleSlider->type(FL_HOR_NICE_SLIDER);
+	m_GScaleSlider->labelfont(FL_COURIER);
+	m_GScaleSlider->labelsize(12);
+	m_GScaleSlider->minimum(0);
+	m_GScaleSlider->maximum(1);
+	m_GScaleSlider->step(0.01);
+	m_GScaleSlider->value(m_GScale);
+	m_GScaleSlider->align(FL_ALIGN_RIGHT);
+	m_GScaleSlider->callback(cb_GScaleSlides);
 
-		// Add B scale slider to the dialog 
-		m_BScaleSlider = new Fl_Value_Slider(10, 70, 300, 20, "B Scale");
-		m_BScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
-		m_BScaleSlider->type(FL_HOR_NICE_SLIDER);
-		m_BScaleSlider->labelfont(FL_COURIER);
-		m_BScaleSlider->labelsize(12);
-		m_BScaleSlider->minimum(0);
-		m_BScaleSlider->maximum(1);
-		m_BScaleSlider->step(0.01);
-		m_BScaleSlider->value(m_BScale);
-		m_BScaleSlider->align(FL_ALIGN_RIGHT);
-		m_BScaleSlider->callback(cb_BScaleSlides);
+	// Add B scale slider to the dialog 
+	m_BScaleSlider = new Fl_Value_Slider(10, 70, 300, 20, "B Scale");
+	m_BScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+	m_BScaleSlider->type(FL_HOR_NICE_SLIDER);
+	m_BScaleSlider->labelfont(FL_COURIER);
+	m_BScaleSlider->labelsize(12);
+	m_BScaleSlider->minimum(0);
+	m_BScaleSlider->maximum(1);
+	m_BScaleSlider->step(0.01);
+	m_BScaleSlider->value(m_BScale);
+	m_BScaleSlider->align(FL_ALIGN_RIGHT);
+	m_BScaleSlider->callback(cb_BScaleSlides);
 
 	m_RGBConfigDialog->end();
 

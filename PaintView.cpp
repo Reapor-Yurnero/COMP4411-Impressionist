@@ -287,6 +287,16 @@ void PaintView::AutoPaintTrigger()
 	redraw();
 }
 
+int PaintView::getHeight()
+{
+	return m_nDrawHeight;
+}
+
+int PaintView::getWidth()
+{
+	return m_nDrawWidth;
+}
+
 void PaintView::CompareOldCurrent()
 {
 	int width = m_pDoc->m_nWidth;

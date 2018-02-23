@@ -18,8 +18,9 @@ class ImpressionistDoc
 // Functions
 public:
 	ImpressionistDoc();
+	~ImpressionistDoc();
 
-	void	setUI(ImpressionistUI* ui);		// Assign the UI to use
+	void		setUI(ImpressionistUI* ui);		// Assign the UI to use
 
 	int		loadImage(char *iname);			// called by the UI to load image
 	int		loadAnotherImage(char *iname);
@@ -29,20 +30,20 @@ public:
 
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
-	void	setBrushType(int type);			// called by the UI to set the brushType
+	void		setBrushType(int type);			// called by the UI to set the brushType
 	int		getBrushType();					// called to get brush type ID [0, 1,...
-	void	setStrokeDirection(int mode);	// called by the UI to set the stroke direction mode
+	void		setStrokeDirection(int mode);	// called by the UI to set the stroke direction mode
 	int		getSize();						// get the UI size for brush
-	void	setSize(int size);				// set the UI size for brush
-	void	setLineAngle(int angle);
+	void		setSize(int size);				// set the UI size for brush
+	void		setLineAngle(int angle);
 	char*	getImageName();					// get the current image name
-	void	swapview();						// swap the original and painting view
+	void 	swapView();						// swap the original and painting view
+	void		mirrorView();					// mirror the original view
 
-	
-	void addHistory();
-	void clearHistory();
-	void redoHistory();
-	void undoHistory();
+	void		addHistory();
+	void		clearHistory();
+	void		redoHistory();
+	void		undoHistory();
 
 // Attributes
 public:
@@ -98,11 +99,11 @@ public:
 
 
 private:
-	char			m_imageName[256];
-	int				BrushType;
-
-	std::deque<unsigned char*> m_history;
-	int             m_nHistoryIndex = 0;
+	char							m_imageName[256];
+	int							BrushType;
+	
+	std::deque<unsigned char*>	m_history;
+	int							m_nHistoryIndex = 0;
 
 };
 
