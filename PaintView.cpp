@@ -156,11 +156,12 @@ void PaintView::draw()
 			break;
 		}
 		SaveCurrentContent();
+		//RestoreContent();
 		CompareOldCurrent();
 	}
 
 	glFlush();
-
+	RestoreContent();
 	#ifndef MESA
 	// To avoid flicker on some machines.
 	glDrawBuffer(GL_BACK);
@@ -306,7 +307,7 @@ void PaintView::AutoPaint()
 {
 	m_pDoc->clearCanvas();
 	//RestoreContent();
-	printf("printfonce\n");
+	// printf("printfonce\n");
 	std::random_device rd;
 	std::mt19937 g(rd());
 	srand(time(NULL));

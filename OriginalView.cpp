@@ -44,7 +44,7 @@ void OriginalView::draw()
 	glClear( GL_COLOR_BUFFER_BIT );
 
 
-	GLubyte * BitmapUsed = NULL;
+	GLubyte * BitmapUsed = m_pDoc->m_ucBitmap;
 	switch (imageChoice) {
 	case 0:
 		BitmapUsed = m_pDoc->m_ucBitmap;
@@ -54,6 +54,9 @@ void OriginalView::draw()
 		break;
 	case 2:
 		BitmapUsed = m_pDoc->m_ucGradientBitmap;
+		break;
+	case 3:
+		BitmapUsed = m_pDoc->m_ucAnotherEdgeMap;
 		break;
 	default:
 		break;

@@ -24,6 +24,7 @@ public:
 	int		loadImage(char *iname);			// called by the UI to load image
 	int		loadAnotherImage(char *iname);
 	int		loadGradientImage(char *iname);
+	int		loadEdgeImage(char *iname);
 	int		saveImage(char *iname);			// called by the UI to save image
 
 
@@ -59,6 +60,7 @@ public:
 	unsigned char*	m_ucIntensityMap;
 	unsigned char*	m_ucBlurredIntensityMap;
 	unsigned char*	m_ucEdgeMap;
+	unsigned char*	m_ucAnotherEdgeMap;
 	unsigned char*	m_ucGradientBitmap;
 	unsigned char*	m_ucAIntensityMap;
 	unsigned char*	m_ucABlurredIntensityMap;

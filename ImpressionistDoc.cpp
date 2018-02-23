@@ -44,6 +44,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucAGradientY = NULL;
 	m_ucABlurredIntensityMap = NULL;
 	m_ucAIntensityMap = NULL;
+	m_ucAnotherEdgeMap = NULL;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -243,6 +244,8 @@ int ImpressionistDoc::loadImage(char *iname)
 	if (m_ucAGradientY) delete[] m_ucAGradientY;
 	if (m_ucAIntensityMap) delete[] m_ucAIntensityMap;
 	if (m_ucABlurredIntensityMap) delete[] m_ucABlurredIntensityMap;
+	if (m_ucAnotherEdgeMap) delete[] m_ucAnotherEdgeMap;
+
 	m_ucBitmap		= data;
 
 	// generate intensity map
@@ -349,13 +352,13 @@ int ImpressionistDoc::loadImage(char *iname)
 		}
 	}
 
-	/*
+	
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
-			std::cout << m_ucGradientX[i + j*width] << " ";
+			std::cout << m_ucGradientX[i + j*width] << " "<< m_ucGradientY[i + j*width] <<"||";
 		}
 		printf("\n");
-	}
+	}/*
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 			std::cout << m_ucGradientY[i + j*width] << " ";
@@ -418,6 +421,7 @@ int ImpressionistDoc::loadAnotherImage(char * iname)
 	if (m_ucIntensityMap) delete[] m_ucIntensityMap;
 	if (m_ucBlurredIntensityMap) delete[] m_ucBlurredIntensityMap;
 	if (m_ucEdgeMap) delete[] m_ucEdgeMap;
+	if (m_ucAnotherEdgeMap) delete[] m_ucAnotherEdgeMap;
 	m_ucBitmap = data;
 
 
@@ -697,6 +701,30 @@ int ImpressionistDoc::loadGradientImage(char * iname)
 	printf("gradient\n");
 
 
+	return 1;
+}
+
+int ImpressionistDoc::loadEdgeImage(char * iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width, height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	if (width != m_nWidth || height != m_nHeight)
+	{
+		fl_alert("Different size BMP!");
+		return 0;
+	}
+	if (m_ucAnotherEdgeMap) delete[] m_ucAnotherEdgeMap;
+	m_ucAnotherEdgeMap = data;
+	printf("load!\n");
+	//for (int i = 0; i < width*height; ++i) {printf("%d %d %d\n", m_ucAnotherEdgeMap[3 * i], m_ucAnotherEdgeMap[3 * i+1], m_ucAnotherEdgeMap[3 * i+2]);}
 	return 1;
 }
 

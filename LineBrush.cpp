@@ -59,10 +59,10 @@ void LineBrush::BrushMove(const Point source, const Point target)
 			line_angle = 0;
 			break;
 		}
-		radient = atan(pDoc->m_ucGradientY[pos] / pDoc->m_ucGradientX[pos]);
+		radient = atan(- pDoc->m_ucGradientY[pos] / pDoc->m_ucGradientX[pos]);
 		//std::cout << radient << std::endl;
 		if (radient < 0) radient = M_PI + radient;
-		line_angle = radient * 180 / M_PI + 90;
+		line_angle = radient * 180.0 / M_PI + 90;
 		//std::cout << line_angle << std::endl;
 		//printf("end\n");
 		break;
@@ -89,21 +89,52 @@ void LineBrush::BrushMove(const Point source, const Point target)
 			line_angle = 0;
 			break;
 		}
-		radient = atan(pDoc->m_ucAGradientY[pos] / pDoc->m_ucAGradientX[pos]);
+		radient = atan(- pDoc->m_ucAGradientY[pos] / pDoc->m_ucAGradientX[pos]);
 		//std::cout << radient << std::endl;
 		if (radient < 0) radient = M_PI + radient;
 		line_angle = radient * 180 / M_PI + 90;
 	default:
 		break;
 	}
-	printf("%d\n", line_angle);
+	//printf("%d\n", line_angle);
+	int startx, starty, endx, endy;
+	int dx = abs((size / 2.0)*cosf((float)line_angle*M_PI / 180));
+	int dy = abs((size / 2.0)*sinf((float)line_angle*M_PI / 180));
+	int width = pDoc->m_nWidth;
+	float tempx, tempy;
+	if (pDoc->m_pUI->m_nClipped == true) {
+		GLubyte* edgemap = pDoc->m_ucEdgeMap;
+		if (pDoc->m_pUI->m_nClipAnother == true) edgemap = pDoc->m_ucAnotherEdgeMap;
+		tempx = startx = target.x; tempy = starty = target.y;
+		while (edgemap[3 * (startx + width*starty)] < 128 && abs(startx-target.x)<=dx && abs(starty - target.y) <= dy) {
+			tempx += cosf((float)line_angle*M_PI / 180.0);
+			tempy += sinf((float)line_angle*M_PI / 180.0);
+			startx = round(tempx);
+			starty = round(tempy);
+			//std::cout << "s" << startx << " " << starty << std::endl;
+		}
+		tempx = endx = target.x; tempy = endy = target.y;
+		while (edgemap[3 * (endx + width*endy)] < 128 && abs(endx - target.x) <= dx && abs(endy - target.y) <= dy) {
+			tempx -= cosf((float)line_angle*M_PI / 180.0);
+			tempy -= sinf((float)line_angle*M_PI / 180.0);
+			endx = round(tempx);
+			endy = round(tempy);
+			//std::cout << "t" << endx << " " << endy << std::endl;
+		}
+	}
+	else {
+		startx = target.x + (size / 2.0)*cosf((float)line_angle*M_PI / 180);
+		starty = target.y + (size / 2.0)*sinf((float)line_angle*M_PI / 180);
+		endx = target.x - (size / 2.0)*cosf((float)line_angle*M_PI / 180);
+		endy = target.y - (size / 2.0)*sinf((float)line_angle*M_PI / 180);
+	}
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBegin(GL_LINES);
 		SetColor(source);
 		//std::cout <<line_angle<<" "<< cosf((float)line_angle*M_PI/180) << " " << sinf((float)line_angle/M_PI) << std::endl;
-		glVertex2d(target.x + (size/2.0)*cosf((float)line_angle*M_PI / 180), target.y+ (size / 2.0)*sinf((float)line_angle*M_PI / 180));
-		glVertex2d(target.x - (size / 2.0)*cosf((float)line_angle*M_PI / 180), target.y - (size / 2.0)*sinf((float)line_angle*M_PI / 180));
+		glVertex2d(startx, starty);
+		glVertex2d(endx, endy);
 	glEnd();
 }
 

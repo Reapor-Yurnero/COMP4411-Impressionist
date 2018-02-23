@@ -203,6 +203,16 @@ void ImpressionistUI::cb_load_gradient_image(Fl_Menu_ * o, void * v)
 	}
 }
 
+void ImpressionistUI::cb_load_edge_image(Fl_Menu_ * o, void * v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->loadEdgeImage(newfile);
+	}
+}
+
 
 //------------------------------------------------------------------
 // Brings up a file chooser and then saves the painted image
@@ -288,6 +298,12 @@ void ImpressionistUI::cb_OriginalView(Fl_Menu_ * o, void * v)
 void ImpressionistUI::cb_GradientView(Fl_Menu_ * o, void * v)
 {
 	whoami(o)->m_origView->imageChoice = 2;
+	whoami(o)->m_origView->refresh();
+}
+
+void ImpressionistUI::cb_AnotherEdgeView(Fl_Menu_ * o, void * v)
+{
+	whoami(o)->m_origView->imageChoice = 3;
 	whoami(o)->m_origView->refresh();
 }
 
@@ -419,6 +435,21 @@ void ImpressionistUI::cb_DimButton(Fl_Widget * o, void * v)
 	((ImpressionistUI*)(o->user_data()))->m_pDoc->applyDim();
 }
 
+void ImpressionistUI::cb_ClipButton(Fl_Widget * o, void * v)
+{
+	bool & clipped = ((ImpressionistUI*)(o->user_data()))->m_nClipped;
+	if (clipped == true) clipped = false;
+	else clipped = true;
+	//printf("%d\n", clipped);
+}
+
+void ImpressionistUI::cb_ClipAnotherButton(Fl_Widget * o, void * v)
+{
+	bool & clipanother = ((ImpressionistUI*)(o->user_data()))->m_nClipAnother;
+	if (clipanother == true) clipanother = false;
+	else clipanother = true;
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -513,6 +544,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
 		{ "&Load Another Image...",	FL_ALT + 'n', (Fl_Callback *)ImpressionistUI::cb_load_another_image },
 		{ "&Load Gradient/Disolve Image...",	FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_load_gradient_image },
+		{ "&Load Edge Image...",	FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_load_edge_image },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },	
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
@@ -524,6 +556,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Show Original Image", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_OriginalView },
 		{ "&Show Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_EdgeView },
 		{ "&Show Gradient/Disolve Image", FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_GradientView },
+		{ "&Show Another Edge Image", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_AnotherEdgeView },
 		{ "&Swap", FL_CTRL + 'w', (Fl_Callback *)ImpressionistUI::cb_swap },
 		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		{ 0 }, 
@@ -602,6 +635,8 @@ ImpressionistUI::ImpressionistUI() {
 	m_BScale = 1.0;
 	m_nSpacing = 10;
 	m_nDimvalue = 1.0;
+	m_nClipped = false;
+	m_nClipAnother = false;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -694,7 +729,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_AutoPaintButton->callback(cb_AutoPaintButton);
 
 		// Dim slider
-		m_DimSlider = new Fl_Value_Slider(10, 230, 200, 20, "Dimmed Background");
+		m_DimSlider = new Fl_Value_Slider(10, 230, 150, 20, "Dimmed Canvas");
 		m_DimSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_DimSlider->type(FL_HOR_NICE_SLIDER);
 		m_DimSlider->labelfont(FL_COURIER);
@@ -710,6 +745,16 @@ ImpressionistUI::ImpressionistUI() {
 		m_DimButton = new Fl_Button(270, 226, 120, 25, "&Apply Dim");
 		m_DimButton->user_data((void*)(this));
 		m_DimButton->callback(cb_DimButton);
+
+		// Clip buttion
+		m_ClipButton = new Fl_Light_Button(270, 256, 120, 25, "&Clipped Edge");
+		m_ClipButton->user_data((void*)(this));
+		m_ClipButton->callback(cb_ClipButton);
+
+		// Clip Another buttion
+		m_ClipAnotherButton = new Fl_Light_Button(150, 256, 120, 25, "&Edge Graph");
+		m_ClipAnotherButton->user_data((void*)(this));
+		m_ClipAnotherButton->callback(cb_ClipAnotherButton);
 
     m_brushDialog->end();	
 
