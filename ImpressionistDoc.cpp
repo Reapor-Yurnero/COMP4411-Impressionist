@@ -845,3 +845,14 @@ void ImpressionistDoc::disolve()
 	m_pUI->m_paintView->refresh();
 }
 
+void ImpressionistDoc::updateEdgeMap()
+{
+	int width = m_nWidth; int height = m_nHeight;
+	int threshold = m_pUI->m_nThreshold;
+	for (int i = 0; i < width; ++i) {
+		for (int j = 0; j < height; ++j) {
+			m_ucEdgeMap[3 * (i + j*width)] = m_ucEdgeMap[3 * (i + j*width) + 1] = m_ucEdgeMap[3 * (i + j*width) + 2] = m_ucGradientNorm[i + j*width] > threshold ? 255 : 0;
+		}
+	}
+}
+

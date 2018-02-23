@@ -94,6 +94,7 @@ public:
 	GLubyte GetIntensity(GLubyte r, GLubyte g, GLubyte b);
 	void	applyDim();
 	void	disolve();
+	void	updateEdgeMap();
 
 
 

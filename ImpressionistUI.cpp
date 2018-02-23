@@ -420,6 +420,11 @@ void ImpressionistUI::cb_SpacingSlides(Fl_Widget * o, void * v)
 	((ImpressionistUI*)(o->user_data()))->m_nSpacing = int(((Fl_Slider *)o)->value());
 }
 
+void ImpressionistUI::cb_ThresholdSlides(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nThreshold = int(((Fl_Slider *)o)->value());
+}
+
 void ImpressionistUI::cb_AutoPaintButton(Fl_Widget * o, void * v)
 {
 	((ImpressionistUI*)(o->user_data()))->m_paintView->AutoPaintTrigger();
@@ -448,6 +453,12 @@ void ImpressionistUI::cb_ClipAnotherButton(Fl_Widget * o, void * v)
 	bool & clipanother = ((ImpressionistUI*)(o->user_data()))->m_nClipAnother;
 	if (clipanother == true) clipanother = false;
 	else clipanother = true;
+}
+
+void ImpressionistUI::cb_ThresholdButton(Fl_Widget * o, void * v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_pDoc->updateEdgeMap();
+	((ImpressionistUI*)(o->user_data()))->m_origView->refresh();
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -640,6 +651,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nDimvalue = 0.0;
 	m_nClipped = false;
 	m_nClipAnother = false;
+	m_nThreshold = 128;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -758,6 +770,24 @@ ImpressionistUI::ImpressionistUI() {
 		m_ClipAnotherButton = new Fl_Light_Button(150, 256, 120, 25, "&Edge Graph");
 		m_ClipAnotherButton->user_data((void*)(this));
 		m_ClipAnotherButton->callback(cb_ClipAnotherButton);
+
+		// Threshold slider
+		m_ThresholdSlider = new Fl_Value_Slider(10, 290, 180, 20, "Threshold");
+		m_ThresholdSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ThresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_ThresholdSlider->labelfont(FL_COURIER);
+		m_ThresholdSlider->labelsize(12);
+		m_ThresholdSlider->minimum(0);
+		m_ThresholdSlider->maximum(255);
+		m_ThresholdSlider->step(1);
+		m_ThresholdSlider->value(m_nThreshold);
+		m_ThresholdSlider->align(FL_ALIGN_RIGHT);
+		m_ThresholdSlider->callback(cb_ThresholdSlides);
+
+		// Apply Threshold buttion
+		m_ThresholdButton = new Fl_Button(270, 285, 120, 25, "&Apply Threshold");
+		m_ThresholdButton->user_data((void*)(this));
+		m_ThresholdButton->callback(cb_ThresholdButton);
 
     m_brushDialog->end();	
 

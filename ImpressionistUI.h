@@ -44,9 +44,11 @@ public:
 	Fl_Slider*			m_AlphaSlider;
 	Fl_Slider*			m_SpacingSlider;
 	Fl_Slider*			m_DimSlider;
+	Fl_Slider*			m_ThresholdSlider;
 	Fl_Button*          m_ClearCanvasButton;
 	Fl_Button*			m_AutoPaintButton;
 	Fl_Button*			m_DimButton;
+	Fl_Button*			m_ThresholdButton;
 	Fl_Light_Button*	m_ClipButton;
 	Fl_Light_Button*	m_ClipAnotherButton;
 
@@ -77,6 +79,7 @@ public:
 	double				m_nDimvalue;
 	bool				m_nClipped;
 	bool				m_nClipAnother;
+	int					m_nThreshold;
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -125,11 +128,13 @@ private:
 	static void	cb_GScaleSlides(Fl_Widget* o, void* v);
 	static void	cb_BScaleSlides(Fl_Widget* o, void* v);
 	static void	cb_SpacingSlides(Fl_Widget* o, void* v);
+	static void	cb_ThresholdSlides(Fl_Widget* o, void* v);
 	static void	cb_AutoPaintButton(Fl_Widget* o, void* v);
 	static void	cb_DimSlides(Fl_Widget* o, void* v);
 	static void	cb_DimButton(Fl_Widget* o, void* v);
 	static void	cb_ClipButton(Fl_Widget* o, void* v);
 	static void	cb_ClipAnotherButton(Fl_Widget* o, void* v);
+	static void	cb_ThresholdButton(Fl_Widget* o, void* v);
 };
 
 #endif
