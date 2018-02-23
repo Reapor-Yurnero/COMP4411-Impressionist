@@ -23,6 +23,8 @@
 #include "BlurBrush.h"
 #include "TriangleBrush.h"
 #include "ScatteredTriangleBrush.h"
+#include "RingBrush.h"
+#include "ScatteredRingBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -67,15 +69,19 @@ ImpressionistDoc::ImpressionistDoc()
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
 	ImpBrush::c_pBrushes[BRUSH_BLUR]
-		= new BlurBrush(this, "Blur");  // need to be revised
+		= new BlurBrush(this, "Blur");  
 	ImpBrush::c_pBrushes[BRUSH_TRIANGLE]
-		= new TriangleBrush(this, "Triangles");  // need to be revised
+		= new TriangleBrush(this, "Triangles"); 
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_TRIANGLE]
-		= new ScatteredTriangleBrush(this, "Scattered Triangles");  // need to be revised
+		= new ScatteredTriangleBrush(this, "Scattered Triangles"); 
+	ImpBrush::c_pBrushes[BRUSH_RING]
+		= new RingBrush(this, "Rings");  
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_RING]
+		= new ScatteredRingBrush(this, "Scattered Rings");  
 	ImpBrush::c_pBrushes[BRUSH_WARP]
-		= new LineBrush(this, "Warps");  // need to be revised
+		= new LineBrush(this, "Warps");  
 	ImpBrush::c_pBrushes[BRUSH_ERASER]
-		= new EraserBrush(this, "Erasers");  // need to be revised
+		= new EraserBrush(this, "Erasers"); 
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
