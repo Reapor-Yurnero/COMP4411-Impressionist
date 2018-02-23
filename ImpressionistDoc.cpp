@@ -19,6 +19,7 @@
 #include "ScatteredPointBrush.h"
 #include "LineBrush.h"
 #include "ScatteredLineBrush.h"
+#include "EraserBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -61,6 +62,14 @@ ImpressionistDoc::ImpressionistDoc()
 		= new ScatteredLineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
+	ImpBrush::c_pBrushes[BRUSH_BLUR]
+		= new LineBrush(this, "Lines");  // need to be revised
+	ImpBrush::c_pBrushes[BRUSH_SHARPEN]
+		= new LineBrush(this, "Lines");  // need to be revised
+	ImpBrush::c_pBrushes[BRUSH_WARP]
+		= new LineBrush(this, "Lines");  // need to be revised
+	ImpBrush::c_pBrushes[BRUSH_ERASER]
+		= new EraserBrush(this, "Lines");  // need to be revised
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];

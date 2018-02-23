@@ -90,7 +90,7 @@ void PaintView::draw()
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
 	{
 		RestoreContent();
-
+		printf("NOevent\n");
 	}
 
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
@@ -210,6 +210,7 @@ int PaintView::handle(int event)
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
 		m_pDoc->m_pUI->m_origView->trackCursor(coord.x + m_nStartCol, m_nEndRow - coord.y + m_nWindowHeight - m_nDrawHeight);
+		//redraw();
 		break;
 	default:
 		return 0;
@@ -304,7 +305,8 @@ void PaintView::CompareOldCurrent()
 void PaintView::AutoPaint()
 {
 	m_pDoc->clearCanvas();
-	RestoreContent();
+	//RestoreContent();
+	printf("printfonce\n");
 	std::random_device rd;
 	std::mt19937 g(rd());
 	srand(time(NULL));
