@@ -1,4 +1,12 @@
+# COMP4411 Project One - Impressionist
+
+Since I used the computer in lab, I did not set up the git creditial. All commits by me may be invisible.
 Thanks for LYH's effort on completing the UNDO/REDO feature as well as his try on the last few challenges!
+We finally earned 16.5 B/S.
+
+## Build & Run
+
+This is a windows VS15 specified project (VS17 is supported as well). You can only build the project and execute the program on **Windows platform**. Don't blame it on me since this is simply the course requirement...
 
 ## Project Description
 
